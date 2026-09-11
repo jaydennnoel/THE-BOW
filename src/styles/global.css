@@ -1,0 +1,209 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ============================================================
+   BASE
+   ============================================================ */
+@layer base {
+  :root {
+    color-scheme: dark;
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    html {
+      scroll-behavior: smooth;
+    }
+  }
+
+  body {
+    @apply bg-ink font-body text-cream antialiased;
+    font-size: clamp(1rem, 0.97rem + 0.18vw, 1.075rem);
+    line-height: 1.65;
+    overflow-x: hidden;
+  }
+
+  body[data-locked="true"] {
+    overflow: hidden;
+  }
+
+  ::selection {
+    @apply bg-brass text-ink;
+  }
+
+  :focus-visible {
+    outline: 2px solid theme("colors.brass.lit");
+    outline-offset: 3px;
+    border-radius: 1px;
+  }
+}
+
+/* ============================================================
+   COMPONENTS — the pieces utilities express badly: the brass
+   button wipe, dotted menu leaders, the clip-path drawer, the
+   checkerboard floor, and the sign in the window.
+   ============================================================ */
+@layer components {
+  .shell {
+    @apply mx-auto w-full max-w-shell px-gutter;
+  }
+
+  .display {
+    @apply font-display font-extrabold uppercase leading-[.84] tracking-[-.005em];
+  }
+
+  /* Checkerboard lifted from the floor of the room */
+  .checker {
+    background-image: conic-gradient(
+      from 90deg at 50% 50%,
+      rgba(236, 228, 212, 0.045) 25%,
+      transparent 0 50%,
+      rgba(236, 228, 212, 0.045) 0 75%,
+      transparent 0
+    );
+    background-size: 26px 26px;
+  }
+
+  /* Paper grain, so the flat panels don't read as flat screens */
+  .grain {
+    background-image: repeating-linear-gradient(
+        0deg,
+        rgba(236, 228, 212, 0.022) 0 1px,
+        transparent 1px 3px
+      ),
+      repeating-linear-gradient(90deg, rgba(0, 0, 0, 0.05) 0 1px, transparent 1px 4px);
+  }
+
+  /* Buttons: an oxblood wipe rises from the bottom edge on hover */
+  .btn {
+    @apply relative isolate inline-flex min-h-[52px] items-center justify-center gap-2.5
+           overflow-hidden rounded-edge px-6 font-mono text-[.78rem] font-semibold
+           uppercase tracking-[.14em] transition-[transform,box-shadow,color]
+           duration-300 ease-cue;
+    background: var(--btn-bg, theme("colors.cream.DEFAULT"));
+    color: var(--btn-fg, theme("colors.ink.DEFAULT"));
+  }
+  .btn::after {
+    content: "";
+    @apply absolute inset-0 -z-10 translate-y-full transition-transform duration-[420ms] ease-cue;
+    background: var(--btn-wipe, theme("colors.oxblood.DEFAULT"));
+  }
+  .btn:hover {
+    @apply -translate-y-0.5 text-cream;
+    box-shadow: 0 14px 32px -14px rgba(0, 0, 0, 0.9);
+  }
+  .btn:hover::after {
+    @apply translate-y-0;
+  }
+  .btn:active {
+    @apply translate-y-0;
+  }
+
+  .btn-brass {
+    --btn-bg: theme("colors.brass.DEFAULT");
+    --btn-fg: theme("colors.ink.DEFAULT");
+    --btn-wipe: theme("colors.oxblood.DEFAULT");
+  }
+
+  .btn-ghost {
+    --btn-bg: transparent;
+    --btn-fg: theme("colors.cream.DEFAULT");
+    --btn-wipe: theme("colors.brass.DEFAULT");
+    @apply border border-hair;
+  }
+  .btn-ghost:hover {
+    @apply border-brass text-ink;
+  }
+
+  .btn-sm {
+    @apply min-h-[42px] px-4 text-[.7rem];
+  }
+
+  .linkline {
+    @apply inline-flex items-center gap-3 border-b border-hair pb-2 font-mono text-[.74rem]
+           uppercase tracking-[.18em] text-cream transition-[gap,color,border-color] duration-300 ease-cue;
+  }
+  .linkline:hover {
+    @apply gap-[1.1rem] border-brass text-brass-lit;
+  }
+
+  /* Dotted leader between a menu item and its price, like a printed board */
+  .leader {
+    @apply h-px flex-1 -translate-y-[3px];
+    background: repeating-linear-gradient(
+      90deg,
+      theme("colors.hair.DEFAULT") 0 2px,
+      transparent 2px 6px
+    );
+  }
+
+  /* Edge-lit panel — the workhorse card */
+  .panel {
+    @apply relative isolate overflow-hidden rounded-edge border border-hair-soft bg-ink-2;
+  }
+  .panel::before {
+    content: "";
+    @apply pointer-events-none absolute inset-x-0 top-0 h-px;
+    background: linear-gradient(90deg, transparent, var(--edge, theme("colors.brass.DEFAULT")), transparent);
+    opacity: 0.55;
+  }
+
+  /* Scrolling sign rail */
+  .marquee {
+    @apply flex w-max items-center gap-[clamp(1.5rem,4vw,3.5rem)] animate-marquee;
+  }
+
+  /* ── the sign in the window ──────────────────────────────
+     Glass tube: a bright core, a soft bloom around it, and a
+     dark unlit outline behind so it reads as a tube and not a
+     glowing font. `--tube` sets the colour.
+     ──────────────────────────────────────────────────────── */
+  .neon {
+    color: #fffaf2;
+    text-shadow:
+      0 0 2px rgba(255, 250, 242, 0.95),
+      0 0 7px var(--tube, theme("colors.neon.pink")),
+      0 0 16px var(--tube, theme("colors.neon.pink")),
+      0 0 36px var(--tube, theme("colors.neon.pink")),
+      0 0 74px var(--tube, theme("colors.neon.pink"));
+  }
+  .neon-off {
+    color: rgba(236, 228, 212, 0.12);
+    text-shadow: 0 1px 0 rgba(0, 0, 0, 0.7);
+  }
+  .neon-stroke {
+    stroke: #fffaf2;
+    filter: drop-shadow(0 0 3px var(--tube, theme("colors.neon.pink")))
+      drop-shadow(0 0 9px var(--tube, theme("colors.neon.pink")))
+      drop-shadow(0 0 24px var(--tube, theme("colors.neon.pink")));
+  }
+
+  /* Full-screen mobile menu wipes down from the header */
+  .drawer {
+    clip-path: inset(0 0 100% 0);
+    visibility: hidden;
+    transition: clip-path 0.55s theme("transitionTimingFunction.cue");
+  }
+  .drawer[data-open="true"] {
+    clip-path: inset(0 0 0 0);
+    visibility: visible;
+  }
+}
+
+/* ============================================================
+   REDUCED MOTION — quality floor, not an afterthought.
+   The sign stays lit; it just stops flickering.
+   ============================================================ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}

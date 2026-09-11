@@ -1,0 +1,386 @@
+/**
+ * ─────────────────────────────────────────────────────────────────────────
+ *  THE BOW — rendering the break.
+ *
+ *  A pinhole camera sitting low and close over the cloth, the way the
+ *  reference footage is shot: the bed fills the frame, the far cushion sits
+ *  just under the top edge with the dark room above it, and a ball's size
+ *  on screen is set entirely by how far away it is.
+ *
+ *  The cloth is painted in screen space — a plane that fills the frame has
+ *  no perspective cues of its own worth chasing. Depth is sold by the balls:
+ *  their size, their stacking order, the haze on the far ones, and the smear
+ *  on the fast ones.
+ * ─────────────────────────────────────────────────────────────────────────
+ */
+
+import { BED, R } from "./table";
+import type { Ball } from "./table";
+
+/* ── camera ───────────────────────────────────────────────────────────── */
+
+export interface Cam {
+  /** Focal length, pixels. */
+  f: number;
+  /** Height above the cloth, table units. */
+  h: number;
+  /** How far in front of z = 0 the lens sits. */
+  d: number;
+  /** Downward pitch, radians. */
+  sin: number;
+  cos: number;
+  tan: number;
+  /** Principal point. */
+  cx: number;
+  cy: number;
+  /** Where the cloth runs out, in pixels down the frame. */
+  horizon: number;
+}
+
+/** A longer lens than a phone camera — it flattens the table the way TV does. */
+const FOCAL = 0.92;
+const HEIGHT = 29;
+const DIST = 52;
+
+/**
+ * Builds the camera for a frame of this size, pitched so the far cushion
+ * lands just below the top edge and the cloth owns everything under it.
+ */
+export function makeCam(w: number, h: number): Cam {
+  const f = FOCAL * w;
+  // taller frames want the horizon higher up, or the cloth swamps the shot
+  const horizonFrac = w / h > 1.9 ? 0.155 : 0.125;
+  const tan = (h * (0.5 - horizonFrac)) / f;
+  const theta = Math.atan(tan);
+  return {
+    f,
+    h: HEIGHT,
+    d: DIST,
+    sin: Math.sin(theta),
+    cos: Math.cos(theta),
+    tan,
+    cx: w / 2,
+    cy: h / 2,
+    horizon: h * horizonFrac,
+  };
+}
+
+export interface Projected {
+  sx: number;
+  sy: number;
+  /** Pixels per table unit at this depth. */
+  k: number;
+}
+
+/** Projects a point `y` units above the cloth at (x, z). */
+export function project(cam: Cam, x: number, z: number, y: number): Projected {
+  const vy = y - cam.h;
+  const vz = z + cam.d;
+  const zc = -vy * cam.sin + vz * cam.cos;
+  const safe = Math.max(zc, 1e-3);
+  return {
+    sx: cam.cx + (cam.f * x) / safe,
+    sy: cam.cy - (cam.f * (vy * cam.cos + vz * cam.sin)) / safe,
+    k: cam.f / safe,
+  };
+}
+
+/**
+ * The depth at which `span` units of cloth fill `frac` of the frame width —
+ * how the wordmark is sized to the viewport instead of guessed at.
+ */
+export function depthFor(cam: Cam, span: number, frac: number, w: number): number {
+  const zc = (cam.f * span) / (frac * w);
+  return (zc - (cam.h - R) * cam.sin) / cam.cos - cam.d;
+}
+
+/* ── the room ─────────────────────────────────────────────────────────── */
+
+let nap: HTMLCanvasElement | null = null;
+function clothNap(): HTMLCanvasElement {
+  if (nap) return nap;
+  const c = document.createElement("canvas");
+  c.width = c.height = 128;
+  const g = c.getContext("2d");
+  if (g) {
+    const img = g.createImageData(128, 128);
+    for (let i = 0; i < img.data.length; i += 4) {
+      const v = 128 + (Math.random() - 0.5) * 170;
+      img.data[i] = img.data[i + 1] = img.data[i + 2] = v;
+      img.data[i + 3] = 20;
+    }
+    g.putImageData(img, 0, 0);
+  }
+  nap = c;
+  return c;
+}
+
+/**
+ * Cloth, cushion and the dark beyond it. Repainted every frame — it's three
+ * gradients and a tile, which costs less than keeping a full-frame bitmap
+ * around and blitting it.
+ */
+export function drawRoom(ctx: CanvasRenderingContext2D, cam: Cam, w: number, h: number): void {
+  const hz = cam.horizon;
+
+  /* the room behind the table */
+  const room = ctx.createLinearGradient(0, 0, 0, hz);
+  room.addColorStop(0, "#08070a");
+  room.addColorStop(1, "#12100f");
+  ctx.fillStyle = room;
+  ctx.fillRect(0, 0, w, hz);
+
+  /* a single warm lamp somewhere back there */
+  const lamp = ctx.createRadialGradient(w * 0.62, hz * 0.1, 0, w * 0.62, hz * 0.5, w * 0.35);
+  lamp.addColorStop(0, "rgba(224,165,74,.22)");
+  lamp.addColorStop(1, "rgba(224,165,74,0)");
+  ctx.fillStyle = lamp;
+  ctx.fillRect(0, 0, w, hz * 1.4);
+
+  /* the far cushion: rubber under cloth, catching the light along its top */
+  const railH = Math.max(6, h * 0.028);
+  const rail = ctx.createLinearGradient(0, hz - railH, 0, hz + railH * 0.3);
+  rail.addColorStop(0, "#0e2c17");
+  rail.addColorStop(0.42, "#174d26");
+  rail.addColorStop(1, "#0a2712");
+  ctx.fillStyle = rail;
+  ctx.fillRect(0, hz - railH, w, railH * 1.3);
+  ctx.fillStyle = "rgba(190,225,200,.1)";
+  ctx.fillRect(0, hz - railH, w, Math.max(1, railH * 0.09));
+
+  /* the bed */
+  const bed = ctx.createLinearGradient(0, hz, 0, h);
+  bed.addColorStop(0, "#15532c");
+  bed.addColorStop(0.15, "#1e7a3c");
+  bed.addColorStop(0.5, "#279247");
+  bed.addColorStop(1, "#17602f");
+  ctx.fillStyle = bed;
+  ctx.fillRect(0, hz, w, h - hz);
+
+  /* the light over the table, pooling a little left of centre */
+  const pool = ctx.createRadialGradient(
+    w * 0.44,
+    hz + (h - hz) * 0.34,
+    0,
+    w * 0.44,
+    hz + (h - hz) * 0.34,
+    Math.max(w, h) * 0.72,
+  );
+  pool.addColorStop(0, "rgba(186,240,160,.22)");
+  pool.addColorStop(0.42, "rgba(90,200,110,.08)");
+  pool.addColorStop(1, "rgba(0,0,0,0)");
+  ctx.fillStyle = pool;
+  ctx.fillRect(0, hz, w, h - hz);
+
+  /* nap */
+  const tile = ctx.createPattern(clothNap(), "repeat");
+  if (tile) {
+    ctx.save();
+    ctx.globalAlpha = 0.55;
+    ctx.fillStyle = tile;
+    ctx.fillRect(0, hz, w, h - hz);
+    ctx.restore();
+  }
+
+  /* the frame falls away at the edges, as a fast lens does */
+  const vig = ctx.createRadialGradient(w / 2, h * 0.5, Math.min(w, h) * 0.28, w / 2, h * 0.5, Math.max(w, h) * 0.78);
+  vig.addColorStop(0, "rgba(0,0,0,0)");
+  vig.addColorStop(1, "rgba(0,0,0,.5)");
+  ctx.fillStyle = vig;
+  ctx.fillRect(0, 0, w, h);
+}
+
+/* ── balls ────────────────────────────────────────────────────────────── */
+
+/** Far to near, so the near ones overlap the far ones. */
+export function inDepthOrder(balls: Ball[]): Ball[] {
+  return balls.filter((b) => !b.gone).sort((a, b) => b.z - a.z);
+}
+
+/** Air between the lens and a ball further off than the focus plane. */
+function haze(b: Ball, focus: number): number {
+  return b.z <= focus ? 0 : Math.min(0.4, (b.z - focus) / 210);
+}
+
+/**
+ * The contact shadow. The camera is low, so it reads as a long, soft smear
+ * rather than a disc under the ball.
+ */
+export function drawShadow(ctx: CanvasRenderingContext2D, cam: Cam, b: Ball): void {
+  const p = project(cam, b.x, b.z, 0);
+  const rr = p.k * R;
+  if (rr < 0.6) return;
+  ctx.save();
+  ctx.globalAlpha = 0.3;
+  ctx.fillStyle = "#07200f";
+  ctx.beginPath();
+  ctx.ellipse(p.sx + rr * 0.06, p.sy + rr * 0.04, rr * 0.94, rr * 0.24, 0, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.restore();
+}
+
+/**
+ * A ball. Lit from above and slightly behind — the overhead tubes — with the
+ * printed face wrapped onto the surface so it slides and foreshortens as the
+ * ball turns, and the far pole swinging into view on the other half of the
+ * roll. Fast balls are smeared along their own path, which is most of what
+ * sells a break as a break.
+ */
+export function drawBall(ctx: CanvasRenderingContext2D, cam: Cam, b: Ball, focus: number): void {
+  const p = project(cam, b.x, b.z, R);
+  const r = p.k * R;
+  if (r < 0.8 || p.sx < -r * 4 || p.sx > ctx.canvas.width + r * 4) return;
+
+  // the smear: a handful of stamps back along the direction of travel
+  const smear = Math.min(1, b.blur / 420);
+  if (smear > 0.06) {
+    const back = project(cam, b.x - b.vx * 0.012, b.z - b.vz * 0.012, R);
+    const steps = 4;
+    for (let i = steps; i >= 1; i--) {
+      const t = i / steps;
+      ctx.save();
+      ctx.globalAlpha = 0.2 * smear * (1 - t * 0.6);
+      body(ctx, b, p.sx + (back.sx - p.sx) * t, p.sy + (back.sy - p.sy) * t, r, focus, true);
+      ctx.restore();
+    }
+  }
+
+  body(ctx, b, p.sx, p.sy, r, focus, false);
+}
+
+function body(
+  ctx: CanvasRenderingContext2D,
+  b: Ball,
+  x: number,
+  y: number,
+  r: number,
+  focus: number,
+  flat: boolean,
+): void {
+  ctx.save();
+  ctx.beginPath();
+  ctx.arc(x, y, r, 0, Math.PI * 2);
+  ctx.clip();
+
+  const ivory = b.cue ? "#f6efdc" : "#f2e9d2";
+  ctx.fillStyle = b.striped || b.cue ? ivory : b.color;
+  ctx.fillRect(x - r, y - r, r * 2, r * 2);
+
+  if (b.striped) {
+    ctx.save();
+    ctx.translate(x, y);
+    ctx.rotate(Math.atan2(b.rz, b.rx) * 0.35);
+    ctx.fillStyle = b.color;
+    ctx.fillRect(-r * 1.4, -r * 0.62 + Math.sin(b.roll) * r * 0.34, r * 2.8, r * 1.24);
+    ctx.restore();
+  }
+
+  if (!flat && !b.cue && b.face && r > 6) face(ctx, b, x, y, r);
+
+  if (!flat) {
+    // resin sphere: key from above, a dark equator, bounced light off the cloth
+    const g = ctx.createRadialGradient(x - r * 0.26, y - r * 0.4, r * 0.05, x, y, r * 1.06);
+    g.addColorStop(0, "rgba(255,255,255,.24)");
+    g.addColorStop(0.32, "rgba(255,255,255,.02)");
+    g.addColorStop(0.7, "rgba(0,0,0,.18)");
+    g.addColorStop(1, "rgba(0,0,0,.56)");
+    ctx.fillStyle = g;
+    ctx.fillRect(x - r, y - r, r * 2, r * 2);
+
+    // light bounced back up off the cloth, under the equator
+    const bounce = ctx.createRadialGradient(x, y + r * 0.8, r * 0.04, x, y + r * 0.55, r * 0.95);
+    bounce.addColorStop(0, "rgba(120,215,130,.26)");
+    bounce.addColorStop(1, "rgba(120,215,130,0)");
+    ctx.fillStyle = bounce;
+    ctx.fillRect(x - r, y - r, r * 2, r * 2);
+
+    // the fluorescent tubes overhead, caught on the polish as three streaks
+    ctx.fillStyle = "#fff";
+    const tube = (ox: number, oy: number, sw: number, sh: number, a: number) => {
+      ctx.globalAlpha = a;
+      ctx.beginPath();
+      ctx.ellipse(x + r * ox, y + r * oy, r * sw, r * sh, 0.1, 0, Math.PI * 2);
+      ctx.fill();
+    };
+    tube(-0.24, -0.54, 0.035, 0.13, 0.9);
+    tube(-0.06, -0.58, 0.03, 0.11, 0.78);
+    tube(0.12, -0.55, 0.026, 0.09, 0.6);
+  }
+  ctx.restore();
+
+  if (flat) return;
+
+  // the air between here and there takes a little contrast out
+  const hz = haze(b, focus);
+  if (hz > 0.01) {
+    ctx.save();
+    ctx.globalAlpha = hz;
+    ctx.fillStyle = "#1f7a4c";
+    ctx.beginPath();
+    ctx.arc(x, y, r, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+  }
+
+  ctx.save();
+  ctx.strokeStyle = "rgba(0,0,0,.34)";
+  ctx.lineWidth = Math.max(0.5, r * 0.045);
+  ctx.beginPath();
+  ctx.arc(x, y, r - r * 0.02, 0, Math.PI * 2);
+  ctx.stroke();
+  ctx.restore();
+}
+
+/** The printed circle and its character, wrapped onto the rolling surface. */
+function face(ctx: CanvasRenderingContext2D, b: Ball, x: number, y: number, r: number): void {
+  // both poles carry the face, so one is always swinging into view
+  for (const pole of [0, Math.PI]) {
+    const depth = Math.cos(b.roll + pole);
+    if (depth <= 0.08) continue;
+
+    const slide = Math.sin(b.roll + pole);
+    // the roll axis lies on the cloth, so on screen it is mostly horizontal
+    const ang = Math.atan2(b.rz * 0.32, b.rx);
+
+    ctx.save();
+    ctx.translate(x + b.rx * slide * r * 0.5, y + b.rz * slide * r * 0.2);
+    ctx.rotate(ang);
+    ctx.scale(Math.max(0.08, depth), 1);
+    ctx.rotate(-ang);
+    ctx.globalAlpha = Math.min(1, depth * 2.2);
+
+    ctx.fillStyle = "#f7f1e1";
+    ctx.beginPath();
+    ctx.arc(0, 0, r * 0.5, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.strokeStyle = "rgba(0,0,0,.16)";
+    ctx.lineWidth = r * 0.028;
+    ctx.stroke();
+
+    ctx.fillStyle = "#17150f";
+    ctx.font = `800 ${(r * (b.face.length > 1 ? 0.56 : 0.72)).toFixed(2)}px "Big Shoulders Display","Arial Black",sans-serif`;
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText(b.face, 0, r * 0.03);
+    ctx.restore();
+  }
+}
+
+/** The hit: chalk dust and a hard flash of light, gone in a quarter second. */
+export function drawImpact(ctx: CanvasRenderingContext2D, cam: Cam, ball: { x: number; z: number }, k: number): void {
+  const p = project(cam, ball.x, ball.z, R);
+  const r = p.k * R * (1.2 + k * 4);
+  ctx.save();
+  ctx.globalAlpha = (1 - k) * 0.6;
+  const g = ctx.createRadialGradient(p.sx, p.sy, 0, p.sx, p.sy, r);
+  g.addColorStop(0, "rgba(255,252,242,.9)");
+  g.addColorStop(0.4, "rgba(220,235,215,.28)");
+  g.addColorStop(1, "rgba(255,255,255,0)");
+  ctx.fillStyle = g;
+  ctx.beginPath();
+  ctx.arc(p.sx, p.sy, r, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.restore();
+}
+
+export { BED };

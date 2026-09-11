@@ -1,0 +1,5 @@
+# The Bow — replace the domain below before launch
+User-agent: *
+Allow: /
+
+Sitemap: https://REPLACE-WITH-DOMAIN.com/sitemap.xml
