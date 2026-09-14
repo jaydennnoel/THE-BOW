@@ -211,11 +211,26 @@ export function drawShadow(ctx: CanvasRenderingContext2D, cam: Cam, b: Ball): vo
   const p = project(cam, b.x, b.z, 0);
   const rr = p.k * R;
   if (rr < 0.6) return;
+
   ctx.save();
-  ctx.globalAlpha = 0.3;
-  ctx.fillStyle = "#062430";
+  // the penumbra, thrown wide by the tubes overhead
+  const soft = ctx.createRadialGradient(p.sx, p.sy, rr * 0.1, p.sx, p.sy, rr * 1.5);
+  soft.addColorStop(0, "rgba(4,22,30,.34)");
+  soft.addColorStop(0.55, "rgba(4,22,30,.16)");
+  soft.addColorStop(1, "rgba(4,22,30,0)");
+  ctx.save();
+  ctx.translate(p.sx + rr * 0.06, p.sy + rr * 0.04);
+  ctx.scale(1, 0.3);
+  ctx.translate(-p.sx, -p.sy);
+  ctx.fillStyle = soft;
+  ctx.fillRect(p.sx - rr * 2, p.sy - rr * 2, rr * 4, rr * 4);
+  ctx.restore();
+
+  // and the hard little bite where the ball actually meets the cloth
+  ctx.globalAlpha = 0.4;
+  ctx.fillStyle = "#04161e";
   ctx.beginPath();
-  ctx.ellipse(p.sx + rr * 0.06, p.sy + rr * 0.04, rr * 0.94, rr * 0.24, 0, 0, Math.PI * 2);
+  ctx.ellipse(p.sx, p.sy + rr * 0.02, rr * 0.6, rr * 0.15, 0, 0, Math.PI * 2);
   ctx.fill();
   ctx.restore();
 }
@@ -232,16 +247,21 @@ export function drawBall(ctx: CanvasRenderingContext2D, cam: Cam, b: Ball, focus
   const r = p.k * R;
   if (r < 0.8 || p.sx < -r * 4 || p.sx > ctx.canvas.width + r * 4) return;
 
-  // the smear: a handful of stamps back along the direction of travel
-  const smear = Math.min(1, b.blur / 420);
-  if (smear > 0.06) {
-    const back = project(cam, b.x - b.vx * 0.012, b.z - b.vz * 0.012, R);
-    const steps = 4;
+  // The smear runs along the path the ball actually covered this frame,
+  // not along its velocity vector — at these speeds the two diverge as soon
+  // as a ball is deflected mid-frame, and the smear peels off the ball.
+  const prev = project(cam, b.px, b.pz, R);
+  const dx = p.sx - prev.sx;
+  const dy = p.sy - prev.sy;
+  const travel = Math.hypot(dx, dy);
+  if (travel > r * 0.16) {
+    const steps = Math.max(4, Math.min(14, Math.round(travel / (r * 0.22))));
+    const weight = Math.min(1, travel / (r * 1.6)) * 0.5;
     for (let i = steps; i >= 1; i--) {
-      const t = i / steps;
+      const k = i / (steps + 1);
       ctx.save();
-      ctx.globalAlpha = 0.2 * smear * (1 - t * 0.6);
-      body(ctx, b, p.sx + (back.sx - p.sx) * t, p.sy + (back.sy - p.sy) * t, r, focus, true);
+      ctx.globalAlpha = (weight / steps) * (1.9 - k);
+      body(ctx, b, p.sx - dx * k, p.sy - dy * k, r, focus, true);
       ctx.restore();
     }
   }
@@ -263,7 +283,8 @@ function body(
   ctx.arc(x, y, r, 0, Math.PI * 2);
   ctx.clip();
 
-  const ivory = b.cue ? "#f6efdc" : "#f2e9d2";
+  /* pigment under the clear coat */
+  const ivory = b.cue ? "#f7f2e3" : "#f4edda";
   ctx.fillStyle = b.striped || b.cue ? ivory : b.color;
   ctx.fillRect(x - r, y - r, r * 2, r * 2);
 
@@ -276,36 +297,87 @@ function body(
     ctx.restore();
   }
 
-  if (!flat && !b.cue && b.face && r > 6) face(ctx, b, x, y, r);
+  if (!flat && !b.cue && b.face && r > 5) face(ctx, b, x, y, r);
 
   if (!flat) {
-    // resin sphere: key from above, a dark equator, bounced light off the cloth
-    const g = ctx.createRadialGradient(x - r * 0.26, y - r * 0.4, r * 0.05, x, y, r * 1.06);
-    g.addColorStop(0, "rgba(255,255,255,.24)");
-    g.addColorStop(0.32, "rgba(255,255,255,.02)");
-    g.addColorStop(0.7, "rgba(0,0,0,.18)");
-    g.addColorStop(1, "rgba(0,0,0,.56)");
-    ctx.fillStyle = g;
+    /*
+     * Shading, in the order light actually arrives. Every layer is a soft
+     * gradient — the previous version painted a white ellipse on top of a
+     * two-stop ramp, which is exactly what makes a sphere look like a
+     * sticker on a disc.
+     */
+
+    /* the tubes overhead: broad diffuse, terminator low and right */
+    const key = ctx.createRadialGradient(
+      x - r * 0.3,
+      y - r * 0.46,
+      r * 0.02,
+      x - r * 0.04,
+      y - r * 0.08,
+      r * 1.32,
+    );
+    key.addColorStop(0, "rgba(255,253,248,.22)");
+    key.addColorStop(0.17, "rgba(255,251,242,.1)");
+    key.addColorStop(0.4, "rgba(255,255,255,.015)");
+    key.addColorStop(0.64, "rgba(0,0,0,.05)");
+    key.addColorStop(0.86, "rgba(0,0,0,.22)");
+    key.addColorStop(1, "rgba(0,0,0,.38)");
+    ctx.fillStyle = key;
     ctx.fillRect(x - r, y - r, r * 2, r * 2);
 
-    // light bounced back up off the cloth, under the equator
-    const bounce = ctx.createRadialGradient(x, y + r * 0.8, r * 0.04, x, y + r * 0.55, r * 0.95);
-    bounce.addColorStop(0, "rgba(110,208,235,.26)");
-    bounce.addColorStop(1, "rgba(110,208,235,0)");
+    /* the dark room wrapping the silhouette — a sphere turns away from the
+       lens at its edge, and this is what reads as roundness rather than an
+       outline drawn round a circle */
+    const edge = ctx.createRadialGradient(x, y, r * 0.66, x, y, r);
+    edge.addColorStop(0, "rgba(0,0,0,0)");
+    edge.addColorStop(0.6, "rgba(3,10,14,.1)");
+    edge.addColorStop(0.88, "rgba(3,9,13,.28)");
+    edge.addColorStop(1, "rgba(2,6,9,.52)");
+    ctx.fillStyle = edge;
+    ctx.fillRect(x - r, y - r, r * 2, r * 2);
+
+    /* cloth bounced back up under the equator */
+    const bounce = ctx.createRadialGradient(x, y + r * 0.78, r * 0.02, x, y + r * 0.5, r * 1);
+    bounce.addColorStop(0, "rgba(120,214,240,.3)");
+    bounce.addColorStop(0.55, "rgba(120,214,240,.09)");
+    bounce.addColorStop(1, "rgba(120,214,240,0)");
     ctx.fillStyle = bounce;
     ctx.fillRect(x - r, y - r, r * 2, r * 2);
 
-    // the fluorescent tubes overhead, caught on the polish as three streaks
-    ctx.fillStyle = "#fff";
-    const tube = (ox: number, oy: number, sw: number, sh: number, a: number) => {
-      ctx.globalAlpha = a;
+    /* clear coat: a wide, very soft sheen over the top third */
+    const sheen = ctx.createRadialGradient(
+      x - r * 0.18,
+      y - r * 0.62,
+      r * 0.04,
+      x - r * 0.18,
+      y - r * 0.5,
+      r * 0.92,
+    );
+    sheen.addColorStop(0, "rgba(255,255,255,.1)");
+    sheen.addColorStop(0.5, "rgba(255,255,255,.025)");
+    sheen.addColorStop(1, "rgba(255,255,255,0)");
+    ctx.fillStyle = sheen;
+    ctx.fillRect(x - r, y - r, r * 2, r * 2);
+
+    /* and the tubes themselves, caught on the polish: soft-edged, small */
+    const tube = (ox: number, oy: number, w: number, hgt: number, a: number) => {
+      ctx.save();
+      ctx.translate(x + r * ox, y + r * oy);
+      ctx.rotate(0.14);
+      ctx.scale(w, hgt);
+      const g = ctx.createRadialGradient(0, 0, 0, 0, 0, r);
+      g.addColorStop(0, `rgba(255,255,255,${a})`);
+      g.addColorStop(0.38, `rgba(255,255,255,${a * 0.5})`);
+      g.addColorStop(1, "rgba(255,255,255,0)");
+      ctx.fillStyle = g;
       ctx.beginPath();
-      ctx.ellipse(x + r * ox, y + r * oy, r * sw, r * sh, 0.1, 0, Math.PI * 2);
+      ctx.arc(0, 0, r, 0, Math.PI * 2);
       ctx.fill();
+      ctx.restore();
     };
-    tube(-0.24, -0.54, 0.035, 0.13, 0.9);
-    tube(-0.06, -0.58, 0.03, 0.11, 0.78);
-    tube(0.12, -0.55, 0.026, 0.09, 0.6);
+    tube(-0.27, -0.5, 0.055, 0.2, 0.9);
+    tube(-0.09, -0.55, 0.045, 0.16, 0.66);
+    tube(0.09, -0.52, 0.038, 0.12, 0.42);
   }
   ctx.restore();
 
@@ -322,14 +394,6 @@ function body(
     ctx.fill();
     ctx.restore();
   }
-
-  ctx.save();
-  ctx.strokeStyle = "rgba(0,0,0,.34)";
-  ctx.lineWidth = Math.max(0.5, r * 0.045);
-  ctx.beginPath();
-  ctx.arc(x, y, r - r * 0.02, 0, Math.PI * 2);
-  ctx.stroke();
-  ctx.restore();
 }
 
 /** The printed circle and its character, wrapped onto the rolling surface. */
@@ -350,15 +414,21 @@ function face(ctx: CanvasRenderingContext2D, b: Ball, x: number, y: number, r: n
     ctx.rotate(-ang);
     ctx.globalAlpha = Math.min(1, depth * 2.2);
 
-    ctx.fillStyle = "#f7f1e1";
+    // the circle is under the clear coat, so its edge is soft and it picks
+    // up the same light the ball does rather than sitting flat and white
+    const disc = ctx.createRadialGradient(-r * 0.14, -r * 0.16, r * 0.04, 0, 0, r * 0.54);
+    disc.addColorStop(0, "#fffdf6");
+    disc.addColorStop(0.62, "#f5eeddff");
+    disc.addColorStop(1, "#e3d9c2");
+    ctx.fillStyle = disc;
     ctx.beginPath();
     ctx.arc(0, 0, r * 0.5, 0, Math.PI * 2);
     ctx.fill();
-    ctx.strokeStyle = "rgba(0,0,0,.16)";
-    ctx.lineWidth = r * 0.028;
+    ctx.strokeStyle = "rgba(0,0,0,.1)";
+    ctx.lineWidth = r * 0.02;
     ctx.stroke();
 
-    ctx.fillStyle = "#17150f";
+    ctx.fillStyle = "#15130e";
     ctx.font = `800 ${(r * (b.face.length > 1 ? 0.56 : 0.72)).toFixed(2)}px "Big Shoulders Display","Arial Black",sans-serif`;
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";

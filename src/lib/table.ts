@@ -56,8 +56,10 @@ export interface Ball {
   /** Resting slot, for the six that stay. */
   tx: number;
   tz: number;
-  /** Speed last frame, so the renderer can smear the ball along its path. */
-  blur: number;
+  /** Position at the start of the frame, so the renderer smears along the
+   *  path actually travelled rather than guessing from velocity. */
+  px: number;
+  pz: number;
   /** Off the edge of the shot. */
   gone: boolean;
 }
@@ -67,25 +69,25 @@ export interface Ball {
  * aged register of the room rather than anything fluorescent.
  */
 export const NAME = [
-  { ch: "T", color: "#e0a51f" },
-  { ch: "H", color: "#1f4f9e" },
-  { ch: "E", color: "#b62a22" },
-  { ch: "B", color: "#5b2d7e" },
-  { ch: "O", color: "#d9691a" },
-  { ch: "W", color: "#15683f" },
+  { ch: "T", color: "#edb01c" },
+  { ch: "H", color: "#2258b4" },
+  { ch: "E", color: "#cf2d22" },
+  { ch: "B", color: "#67338f" },
+  { ch: "O", color: "#e8721a" },
+  { ch: "W", color: "#1a7d4b" },
 ] as const;
 
 /** The nine that don't: the 7, the 8, and the stripes. */
 const REST = [
-  { color: "#7d2029", striped: false, face: "7" },
-  { color: "#141414", striped: false, face: "8" },
-  { color: "#e0a51f", striped: true, face: "9" },
-  { color: "#1f4f9e", striped: true, face: "10" },
-  { color: "#b62a22", striped: true, face: "11" },
-  { color: "#5b2d7e", striped: true, face: "12" },
-  { color: "#d9691a", striped: true, face: "13" },
-  { color: "#15683f", striped: true, face: "14" },
-  { color: "#7d2029", striped: true, face: "15" },
+  { color: "#8e2430", striped: false, face: "7" },
+  { color: "#17171a", striped: false, face: "8" },
+  { color: "#edb01c", striped: true, face: "9" },
+  { color: "#2258b4", striped: true, face: "10" },
+  { color: "#cf2d22", striped: true, face: "11" },
+  { color: "#67338f", striped: true, face: "12" },
+  { color: "#e8721a", striped: true, face: "13" },
+  { color: "#1a7d4b", striped: true, face: "14" },
+  { color: "#8e2430", striped: true, face: "15" },
 ] as const;
 
 /** Rack slots for the lettered balls — spread across all five rows. */
@@ -166,7 +168,8 @@ export function rack(stacked: boolean): Ball[] {
       rz: 1,
       tx: nameIdx >= 0 ? slots[nameIdx].x : 0,
       tz: nameIdx >= 0 ? slots[nameIdx].z : 0,
-      blur: 0,
+      px: pos[i].x,
+      pz: pos[i].z,
       gone: false,
     });
   }
@@ -185,7 +188,8 @@ export function rack(stacked: boolean): Ball[] {
     rz: 1,
     tx: 0,
     tz: 0,
-    blur: 0,
+    px: CUE_START.x,
+    pz: CUE_START.z,
     gone: false,
   });
 
@@ -242,11 +246,60 @@ export function settle(balls: Ball[]): void {
     b.roll = 0;
     b.rx = 0;
     b.rz = 1;
-    b.blur = 0;
+    b.px = b.x;
+    b.pz = b.z;
   }
 }
 
 /* ── simulation ───────────────────────────────────────────────────────── */
+
+/**
+ * Two balls on their way to different slots sometimes have to swap sides.
+ * Head on, the spring pulling each one forward and the contact pushing it
+ * back reach a standstill, and the pair settle into each other's slots — the
+ * name comes out misspelt. This nudges each of them across the contact, in
+ * whichever direction takes it nearer its own slot, so they roll around one
+ * another instead of jamming.
+ *
+ * The earlier fix was to stop resolving these contacts once the balls were
+ * close to home. That sorted the spelling but let them pass through each
+ * other in plain view.
+ */
+function slide(a: Ball, b: Ball, dt: number): void {
+  const dx = b.x - a.x;
+  const dz = b.z - a.z;
+  const d = Math.hypot(dx, dz);
+  if (d < 1e-4 || d > R * 2.4) return;
+  const nx = dx / d;
+  const nz = dz / d;
+  const gain = 190 * dt;
+
+  const nudge = (ball: Ball, sx: number, sz: number) => {
+    const gx = ball.tx - ball.x;
+    const gz = ball.tz - ball.z;
+    const into = gx * sx + gz * sz;
+    if (into <= 0) return; // already heading away from the contact
+    let tx = gx - into * sx;
+    let tz = gz - into * sz;
+    let len = Math.hypot(tx, tz);
+    if (len < 1e-3) {
+      // dead head-on: break the symmetry the same way every time, so the
+      // pair always resolves, and always resolves identically
+      tx = -sz;
+      tz = sx;
+      if (ball.tx < ball.x) {
+        tx = -tx;
+        tz = -tz;
+      }
+      len = 1;
+    }
+    ball.vx += (tx / len) * gain;
+    ball.vz += (tz / len) * gain;
+  };
+
+  nudge(a, nx, nz);
+  nudge(b, -nx, -nz);
+}
 
 /** Elastic impulse along the contact normal, with the overlap pushed out. */
 export function collide(a: Ball, b: Ball, restitution: number): void {
@@ -275,11 +328,38 @@ export function collide(a: Ball, b: Ball, restitution: number): void {
 }
 
 /**
- * One tick. `t` is the clock, and the phase falls out of it rather than
- * being tracked separately, so a resize or a replay can't desynchronise.
- * Returns true while anything is still moving.
+ * The simulation runs on a fixed step regardless of frame rate.
+ *
+ * On a break the cue is doing 620 units/s, which is close to two ball
+ * widths in a single 60fps frame. Integrating that in one go means balls
+ * pass through each other, contacts resolve a frame late, and the whole
+ * scatter arrives in visible chunks. Stepping at 1/360s costs a handful of
+ * cheap iterations and the break comes out smooth and properly ordered.
  */
+const SUBSTEP = 1 / 360;
+const MAX_SUBSTEPS = 32;
+
 export function step(balls: Ball[], dt: number, t: number): boolean {
+  for (const b of balls) {
+    b.px = b.x;
+    b.pz = b.z;
+  }
+
+  let moving = false;
+  let done = 0;
+  let clock = t - dt;
+  let n = 0;
+  while (done < dt - 1e-7 && n++ < MAX_SUBSTEPS) {
+    const h = Math.min(SUBSTEP, dt - done);
+    done += h;
+    clock += h;
+    if (substep(balls, h, clock)) moving = true;
+  }
+  return moving;
+}
+
+/** One fixed step of the simulation. */
+function substep(balls: Ball[], dt: number, t: number): boolean {
   let moving = false;
   const assembling = t >= T_ASSEMBLE;
 
@@ -319,13 +399,11 @@ export function step(balls: Ball[], dt: number, t: number): boolean {
     // would overpower it within a ball's width and park them short.
     const guided = !!b.letter && assembling;
     const sp = Math.hypot(b.vx, b.vz);
-    b.blur = sp;
     if (sp > 0) {
       const next = guided ? sp : Math.max(0, sp - CLOTH_DECEL * dt);
       if (next <= (guided ? 0.12 : 0.6)) {
         b.vx = 0;
         b.vz = 0;
-        b.blur = 0;
       } else {
         b.vx = (b.vx / sp) * next;
         b.vz = (b.vz / sp) * next;
@@ -368,15 +446,14 @@ export function step(balls: Ball[], dt: number, t: number): boolean {
   }
 
   const rest = assembling ? 0.35 : BALL_REST;
-  const sorting = t > T_ASSEMBLE + 0.5;
   for (let i = 0; i < balls.length; i++) {
     const a = balls[i];
     if (a.gone) continue;
     for (let j = i + 1; j < balls.length; j++) {
       const b = balls[j];
       if (b.gone) continue;
-      if (sorting && a.letter && b.letter) continue;
       collide(a, b, rest);
+      if (assembling && a.letter && b.letter) slide(a, b, dt);
     }
   }
 
