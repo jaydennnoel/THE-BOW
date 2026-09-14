@@ -32,8 +32,8 @@ export function Menu() {
       className="relative isolate overflow-hidden py-section"
       style={{
         background:
-          "radial-gradient(55% 45% at 12% 10%,rgba(125,32,41,.3),transparent 62%)," +
-          "radial-gradient(50% 45% at 90% 85%,rgba(200,150,47,.12),transparent 62%),#121110",
+          "radial-gradient(55% 45% at 12% 10%,rgba(244,241,234,.07),transparent 62%)," +
+          "radial-gradient(50% 45% at 90% 85%,rgba(244,241,234,.05),transparent 62%),#111110",
       }}
     >
       <div className="shell relative">
@@ -69,7 +69,7 @@ export function Menu() {
                   tabIndex={on ? 0 : -1}
                   onClick={() => setActive(cat.id)}
                   className={`rounded-edge border border-transparent px-4 py-2.5 font-mono text-[.72rem] font-medium uppercase leading-none tracking-[.16em] transition-colors ${
-                    on ? "bg-brass text-ink shadow-inset" : "text-cream-faint hover:text-cream"
+                    on ? "bg-cream text-ink shadow-inset" : "text-cream-faint hover:text-cream"
                   }`}
                 >
                   {cat.label}
@@ -95,13 +95,13 @@ export function Menu() {
                       <span className="flex-none font-display text-[1.3rem] font-bold uppercase leading-none tracking-[.015em]">
                         {item.name}
                         {item.badge && (
-                          <span className="ml-2 rounded-edge border border-felt-lit/50 px-1.5 py-1 align-middle font-mono text-[.58rem] font-medium uppercase tracking-[.14em] text-brass-lit">
+                          <span className="ml-2 rounded-edge border border-hair px-1.5 py-1 align-middle font-mono text-[.58rem] font-medium uppercase tracking-[.14em] text-cream">
                             {item.badge}
                           </span>
                         )}
                       </span>
                       <span aria-hidden="true" className="leader" />
-                      <span className="flex-none font-mono text-[.72rem] tracking-[.1em] text-brass">$—</span>
+                      <span className="flex-none font-mono text-[.72rem] tracking-[.1em] text-cream">$—</span>
                     </div>
                     <p className="max-w-[46ch] text-[.95rem] text-cream-dim">{item.desc}</p>
                   </div>

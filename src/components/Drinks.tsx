@@ -48,9 +48,9 @@ export function Drinks() {
       className="py-section"
       style={{
         background:
-          "radial-gradient(60% 50% at 85% 15%,rgba(200,150,47,.2),transparent 65%)," +
-          "radial-gradient(55% 50% at 10% 80%,rgba(125,32,41,.24),transparent 65%)," +
-          "linear-gradient(180deg,#0b0a08,#121110)",
+          "radial-gradient(60% 50% at 85% 15%,rgba(244,241,234,.07),transparent 65%)," +
+          "radial-gradient(55% 50% at 10% 80%,rgba(244,241,234,.06),transparent 65%)," +
+          "linear-gradient(180deg,#0a0a09,#111110)",
       }}
     >
       <div className="shell">

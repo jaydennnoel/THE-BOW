@@ -351,8 +351,8 @@ export function Hero() {
         className="pointer-events-none absolute inset-0 z-[1]"
         style={{
           background:
-            "linear-gradient(180deg,rgba(9,8,7,.5) 0%,transparent 18%,transparent 46%," +
-            "rgba(9,8,7,.78) 72%,#090807 92%)",
+            "linear-gradient(180deg,rgba(10,10,9,.5) 0%,transparent 18%,transparent 46%," +
+            "rgba(10,10,9,.78) 72%,#0a0a09 92%)",
         }}
       />
 
@@ -377,8 +377,10 @@ export function Hero() {
             }`}
           >
             <Eyebrow className="mb-5">Bar · Kitchen · Pool hall</Eyebrow>
-            <p className="display mb-5 text-[clamp(2.5rem,1.1rem+5.9vw,5.4rem)]">
-              Eat. Drink. <span className="text-brass">Rack 'em.</span>
+            {/* monochrome puts the emphasis on the brightest phrase, not the
+                loudest colour, so the lead-in recedes and the payoff doesn't */}
+            <p className="display mb-5 text-[clamp(2.5rem,1.1rem+5.9vw,5.4rem)] text-cream-dim">
+              Eat. Drink. <span className="text-cream">Rack 'em.</span>
             </p>
             <p className="max-w-[46ch] text-[clamp(.95rem,.92rem+.2vw,1.08rem)] text-cream-dim">
               Burgers off the flat top, cold beer, and a room full of open tables. No bookings — walk
@@ -408,7 +410,7 @@ export function Hero() {
               Kitchen &amp; tables
             </p>
             <p className="font-mono text-[.7rem] uppercase leading-[1.9] tracking-[.16em] text-cream-faint">
-              <span className="text-brass">Walk in</span>
+              <span className="text-cream">Walk in</span>
               <br />
               first come, first rack
             </p>

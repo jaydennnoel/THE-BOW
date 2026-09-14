@@ -133,29 +133,29 @@ export const menu: MenuCategory[] = [
 ];
 
 export const drinks = [
-  { n: "01", name: "Cocktails", accent: "#cf5a68", body: "House classics and a short list of our own. Shaken, stirred, no theatrics.", glass: "cocktail" },
-  { n: "02", name: "Beer", accent: "#e0ad42", body: "Draft, bottles and cans. Domestic staples plus whatever's local right now.", glass: "beer" },
-  { n: "03", name: "Wine", accent: "#b673a6", body: "Reds, whites and bubbles by the glass or the bottle.", glass: "wine" },
-  { n: "04", name: "Spirits", accent: "#dd7a3a", body: "Whiskey, tequila, gin, rum and vodka. Neat, rocks, or built into something.", glass: "spirit" },
-  { n: "05", name: "Zero proof", accent: "#47ad66", body: "Mocktails, sodas and coffee for whoever's driving everyone home.", glass: "soda" },
+  { n: "01", name: "Cocktails", accent: "#f4f1ea", body: "House classics and a short list of our own. Shaken, stirred, no theatrics.", glass: "cocktail" },
+  { n: "02", name: "Beer", accent: "#f4f1ea", body: "Draft, bottles and cans. Domestic staples plus whatever's local right now.", glass: "beer" },
+  { n: "03", name: "Wine", accent: "#f4f1ea", body: "Reds, whites and bubbles by the glass or the bottle.", glass: "wine" },
+  { n: "04", name: "Spirits", accent: "#f4f1ea", body: "Whiskey, tequila, gin, rum and vodka. Neat, rocks, or built into something.", glass: "spirit" },
+  { n: "05", name: "Zero proof", accent: "#f4f1ea", body: "Mocktails, sodas and coffee for whoever's driving everyone home.", glass: "soda" },
 ] as const;
 
 /** The hall runs on walk-ins. Nothing here is held, booked or reserved. */
 export const pool = [
-  { n: "01", title: "Open play", accent: "#47ad66", body: "Put your name on the board and we'll shout when a table frees up. First come, first rack." },
-  { n: "02", title: "Winner stays", accent: "#dd7a3a", body: "House rule on the front tables. Lose and you're back on the board — no hard feelings." },
-  { n: "03", title: "Leagues", accent: "#cf5a68", body: "Weekly league nights for regulars. Ask the bar about picking up a spot on a team." },
-  { n: "04", title: "Tournaments", accent: "#e0ad42", body: "Bracket nights with a sign-up sheet at the bar. Turn up early, the board fills fast." },
-  { n: "05", title: "Big groups", accent: "#b673a6", body: "Bring the whole crew — just tell the bar how many of you there are when you land." },
+  { n: "01", title: "Open play", accent: "#f4f1ea", body: "Put your name on the board and we'll shout when a table frees up. First come, first rack." },
+  { n: "02", title: "Winner stays", accent: "#f4f1ea", body: "House rule on the front tables. Lose and you're back on the board — no hard feelings." },
+  { n: "03", title: "Leagues", accent: "#f4f1ea", body: "Weekly league nights for regulars. Ask the bar about picking up a spot on a team." },
+  { n: "04", title: "Tournaments", accent: "#f4f1ea", body: "Bracket nights with a sign-up sheet at the bar. Turn up early, the board fills fast." },
+  { n: "05", title: "Big groups", accent: "#f4f1ea", body: "Bring the whole crew — just tell the bar how many of you there are when you land." },
 ] as const;
 
 /** PLACEHOLDER schedule — replace with the real calendar. */
 export const events = [
-  { when: "Tuesdays", cadence: "Weekly", name: "8-ball tournament", desc: "Sign-up sheet at the bar, bracket play, winner takes the pot.", cta: "How it works", href: "#pool", accent: "#47ad66" },
-  { when: "Wednesdays", cadence: "Weekly", name: "Trivia night", desc: "Teams of six or fewer. Prizes for the top three. Come early for a seat.", cta: "See the menu", href: "#menu", accent: "#dd7a3a" },
-  { when: "Thursdays", cadence: "Weekly", name: "League night", desc: "The hall is busy and loud. Open tables at the back all night.", cta: "Join a team", href: "#contact", accent: "#cf5a68" },
-  { when: "Fridays", cadence: "Weekly", name: "Live music", desc: "Local acts on the floor. Kitchen runs late, bar runs later.", cta: "What's pouring", href: "#drinks", accent: "#e0ad42" },
-  { when: "Game day", cadence: "Seasonal", name: "Watch party", desc: "Every screen on, sound up for the big one, food and drink specials.", cta: "Find us", href: "#contact", accent: "#b673a6" },
+  { when: "Tuesdays", cadence: "Weekly", name: "8-ball tournament", desc: "Sign-up sheet at the bar, bracket play, winner takes the pot.", cta: "How it works", href: "#pool", accent: "#f4f1ea" },
+  { when: "Wednesdays", cadence: "Weekly", name: "Trivia night", desc: "Teams of six or fewer. Prizes for the top three. Come early for a seat.", cta: "See the menu", href: "#menu", accent: "#f4f1ea" },
+  { when: "Thursdays", cadence: "Weekly", name: "League night", desc: "The hall is busy and loud. Open tables at the back all night.", cta: "Join a team", href: "#contact", accent: "#f4f1ea" },
+  { when: "Fridays", cadence: "Weekly", name: "Live music", desc: "Local acts on the floor. Kitchen runs late, bar runs later.", cta: "What's pouring", href: "#drinks", accent: "#f4f1ea" },
+  { when: "Game day", cadence: "Seasonal", name: "Watch party", desc: "Every screen on, sound up for the big one, food and drink specials.", cta: "Find us", href: "#contact", accent: "#f4f1ea" },
 ] as const;
 
 export const gallery = [

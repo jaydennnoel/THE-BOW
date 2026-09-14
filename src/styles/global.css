@@ -32,19 +32,19 @@
   }
 
   ::selection {
-    @apply bg-brass text-ink;
+    @apply bg-cream text-ink;
   }
 
   :focus-visible {
-    outline: 2px solid theme("colors.brass.lit");
+    outline: 2px solid theme("colors.cream.DEFAULT");
     outline-offset: 3px;
     border-radius: 1px;
   }
 }
 
 /* ============================================================
-   COMPONENTS — the pieces utilities express badly: the brass
-   button wipe, dotted menu leaders, the clip-path drawer, the
+   COMPONENTS — the pieces utilities express badly: the button
+   wipe, dotted menu leaders, the clip-path drawer, the
    checkerboard floor, and the sign in the window.
    ============================================================ */
 @layer components {
@@ -60,9 +60,9 @@
   .checker {
     background-image: conic-gradient(
       from 90deg at 50% 50%,
-      rgba(236, 228, 212, 0.045) 25%,
+      rgba(244, 241, 234, 0.045) 25%,
       transparent 0 50%,
-      rgba(236, 228, 212, 0.045) 0 75%,
+      rgba(244, 241, 234, 0.045) 0 75%,
       transparent 0
     );
     background-size: 26px 26px;
@@ -72,13 +72,13 @@
   .grain {
     background-image: repeating-linear-gradient(
         0deg,
-        rgba(236, 228, 212, 0.022) 0 1px,
+        rgba(244, 241, 234, 0.022) 0 1px,
         transparent 1px 3px
       ),
       repeating-linear-gradient(90deg, rgba(0, 0, 0, 0.05) 0 1px, transparent 1px 4px);
   }
 
-  /* Buttons: an oxblood wipe rises from the bottom edge on hover */
+  /* Buttons: a wipe rises from the bottom edge on hover */
   .btn {
     @apply relative isolate inline-flex min-h-[52px] items-center justify-center gap-2.5
            overflow-hidden rounded-edge px-6 font-mono text-[.78rem] font-semibold
@@ -90,7 +90,7 @@
   .btn::after {
     content: "";
     @apply absolute inset-0 -z-10 translate-y-full transition-transform duration-[420ms] ease-cue;
-    background: var(--btn-wipe, theme("colors.oxblood.DEFAULT"));
+    background: var(--btn-wipe, theme("colors.char.2"));
   }
   .btn:hover {
     @apply -translate-y-0.5 text-cream;
@@ -103,20 +103,14 @@
     @apply translate-y-0;
   }
 
-  .btn-brass {
-    --btn-bg: theme("colors.brass.DEFAULT");
-    --btn-fg: theme("colors.ink.DEFAULT");
-    --btn-wipe: theme("colors.oxblood.DEFAULT");
-  }
-
   .btn-ghost {
     --btn-bg: transparent;
     --btn-fg: theme("colors.cream.DEFAULT");
-    --btn-wipe: theme("colors.brass.DEFAULT");
+    --btn-wipe: theme("colors.cream.DEFAULT");
     @apply border border-hair;
   }
   .btn-ghost:hover {
-    @apply border-brass text-ink;
+    @apply border-cream text-ink;
   }
 
   .btn-sm {
@@ -128,7 +122,7 @@
            uppercase tracking-[.18em] text-cream transition-[gap,color,border-color] duration-300 ease-cue;
   }
   .linkline:hover {
-    @apply gap-[1.1rem] border-brass text-brass-lit;
+    @apply gap-[1.1rem] border-cream text-cream;
   }
 
   /* Dotted leader between a menu item and its price, like a printed board */
@@ -148,8 +142,8 @@
   .panel::before {
     content: "";
     @apply pointer-events-none absolute inset-x-0 top-0 h-px;
-    background: linear-gradient(90deg, transparent, var(--edge, theme("colors.brass.DEFAULT")), transparent);
-    opacity: 0.55;
+    background: linear-gradient(90deg, transparent, theme("colors.cream.DEFAULT"), transparent);
+    opacity: 0.4;
   }
 
   /* Scrolling sign rail */
@@ -158,28 +152,25 @@
   }
 
   /* ── the sign in the window ──────────────────────────────
-     Glass tube: a bright core, a soft bloom around it, and a
-     dark unlit outline behind so it reads as a tube and not a
-     glowing font. `--tube` sets the colour.
+     A length of glass bent into a shape, not a glowing font.
+     `--tube` is the colour of the gas; the bloom is layered on
+     the element itself so nothing clips it. Used only by the
+     OPEN sign hanging in the window.
      ──────────────────────────────────────────────────────── */
-  .neon {
-    color: #fffaf2;
-    text-shadow:
-      0 0 2px rgba(255, 250, 242, 0.95),
-      0 0 7px var(--tube, theme("colors.neon.pink")),
-      0 0 16px var(--tube, theme("colors.neon.pink")),
-      0 0 36px var(--tube, theme("colors.neon.pink")),
-      0 0 74px var(--tube, theme("colors.neon.pink"));
+  .tube-loop {
+    border: 2px solid #fffdf8;
+    box-shadow:
+      0 0 2px var(--tube),
+      0 0 7px var(--tube),
+      0 0 18px color-mix(in srgb, var(--tube) 70%, transparent),
+      inset 0 0 5px var(--tube),
+      inset 0 0 13px color-mix(in srgb, var(--tube) 40%, transparent);
   }
-  .neon-off {
-    color: rgba(236, 228, 212, 0.12);
-    text-shadow: 0 1px 0 rgba(0, 0, 0, 0.7);
-  }
-  .neon-stroke {
-    stroke: #fffaf2;
-    filter: drop-shadow(0 0 3px var(--tube, theme("colors.neon.pink")))
-      drop-shadow(0 0 9px var(--tube, theme("colors.neon.pink")))
-      drop-shadow(0 0 24px var(--tube, theme("colors.neon.pink")));
+
+  /* The light the sign throws onto whatever is behind it */
+  .tube-cast {
+    filter: blur(26px);
+    opacity: 0.45;
   }
 
   /* Full-screen mobile menu wipes down from the header */

@@ -23,8 +23,8 @@ export function Contact() {
       className="relative isolate overflow-hidden py-section"
       style={{
         background:
-          "radial-gradient(60% 50% at 85% 12%,rgba(200,150,47,.14),transparent 65%)," +
-          "radial-gradient(55% 45% at 10% 90%,rgba(125,32,41,.24),transparent 65%),#0b0a08",
+          "radial-gradient(60% 50% at 85% 12%,rgba(244,241,234,.06),transparent 65%)," +
+          "radial-gradient(55% 45% at 10% 90%,rgba(244,241,234,.06),transparent 65%),#0a0a09",
       }}
     >
       <div className="shell relative">
@@ -34,7 +34,7 @@ export function Contact() {
             <>
               Come by.
               <br />
-              <span className="text-brass">We're open.</span>
+              <span className="text-cream">We're open.</span>
             </>
           }
           aside={
@@ -53,7 +53,7 @@ export function Contact() {
                   href={site.contact.mapsUrl}
                   target="_blank"
                   rel="noopener"
-                  className="transition-colors hover:text-brass-lit"
+                  className="transition-colors hover:text-cream"
                 >
                   {site.contact.address1}
                   <br />
@@ -61,12 +61,12 @@ export function Contact() {
                 </a>
               </Row>
               <Row label="Phone">
-                <a href={site.contact.phoneHref} className="transition-colors hover:text-brass-lit">
+                <a href={site.contact.phoneHref} className="transition-colors hover:text-cream">
                   {site.contact.phoneLabel}
                 </a>
               </Row>
               <Row label="Email">
-                <a href={site.contact.emailHref} className="transition-colors hover:text-brass-lit">
+                <a href={site.contact.emailHref} className="transition-colors hover:text-cream">
                   {site.contact.emailLabel}
                 </a>
               </Row>
@@ -93,9 +93,9 @@ export function Contact() {
             {/* No booking, nothing to submit — the door is the whole system. */}
             <div
               className="panel grid gap-4 p-[clamp(1.6rem,3vw,2.4rem)]"
-              style={{ ["--edge" as string]: "#e0ad42" }}
+              style={{ ["--edge" as string]: "#f4f1ea" }}
             >
-              <span className="font-mono text-[.66rem] uppercase leading-none tracking-[.22em] text-brass">
+              <span className="font-mono text-[.66rem] uppercase leading-none tracking-[.22em] text-cream">
                 How it works
               </span>
               <h3 className="display text-[clamp(2rem,1.4rem+2.4vw,3.2rem)]">
@@ -108,7 +108,7 @@ export function Contact() {
                 your name on the board, and we'll sort you out from there.
               </p>
               <div className="mt-2 flex flex-wrap gap-2.5">
-                <a className="btn btn-brass max-sm:w-full" href={site.contact.phoneHref}>
+                <a className="btn btn max-sm:w-full" href={site.contact.phoneHref}>
                   Call The Bow
                 </a>
                 <a

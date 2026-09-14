@@ -10,8 +10,8 @@ export function About() {
       className="relative isolate overflow-hidden py-section"
       style={{
         background:
-          "radial-gradient(60% 50% at 88% 18%,rgba(200,150,47,.16),transparent 62%)," +
-          "linear-gradient(180deg,#0b0a08,#121110)",
+          "radial-gradient(60% 50% at 88% 18%,rgba(244,241,234,.06),transparent 62%)," +
+          "linear-gradient(180deg,#0a0a09,#111110)",
       }}
     >
       <div className="shell relative">
@@ -41,7 +41,7 @@ export function About() {
                 height={1108}
                 loading="lazy"
                 decoding="async"
-                className="aspect-[4/5] h-auto w-full object-cover brightness-95 saturate-[1.3] transition-[transform,filter] duration-[1200ms] ease-cue group-hover:scale-[1.035] group-hover:brightness-110 group-hover:saturate-150"
+                className="aspect-[4/5] h-auto w-full object-cover grayscale brightness-95 contrast-[1.1] transition-[transform,filter] duration-[1200ms] ease-cue group-hover:scale-[1.035] group-hover:grayscale-0 group-hover:brightness-105"
               />
             </div>
             <div className="relative mt-2 w-full overflow-hidden rounded-edge border-0 sm:absolute sm:-bottom-[8%] sm:-right-[6%] sm:mt-0 sm:w-[min(46%,260px)] sm:border-[6px] sm:border-ink-2 sm:shadow-[0_24px_60px_-20px_rgba(0,0,0,.9)]">
@@ -52,7 +52,7 @@ export function About() {
                 height={542}
                 loading="lazy"
                 decoding="async"
-                className="aspect-video h-auto w-full object-cover brightness-100 saturate-[1.35] sm:aspect-square"
+                className="aspect-video h-auto w-full object-cover grayscale contrast-[1.1] sm:aspect-square"
               />
             </div>
           </Reveal>
@@ -67,7 +67,7 @@ export function About() {
             <ul className="mt-1.5 grid border-t border-hair">
               {about.map((row) => (
                 <li key={row.n} className="grid grid-cols-[auto_1fr] items-baseline gap-5 border-b border-hair py-[1.15rem]">
-                  <b className="font-mono text-[.68rem] font-normal leading-none tracking-[.14em] text-brass">{row.n}</b>
+                  <b className="font-mono text-[.68rem] font-normal leading-none tracking-[.14em] text-cream">{row.n}</b>
                   <span className="text-[.98rem] text-cream-dim">
                     <strong className="mb-1 block font-display text-[1.15rem] font-bold uppercase leading-tight tracking-[.02em] text-cream">
                       {row.title}

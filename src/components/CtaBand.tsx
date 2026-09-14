@@ -1,5 +1,5 @@
 import { site } from "@/data/site";
-import { NeonSign } from "./NeonSign";
+import { OpenSign } from "./OpenSign";
 import { Reveal } from "./ui/Reveal";
 
 /** The window from the street: brick, a blind, and the sign doing the talking. */
@@ -12,17 +12,17 @@ export function CtaBand() {
         style={{
           backgroundImage:
             // courses of brick, going dark toward the edges of the frame
-            "radial-gradient(90% 110% at 50% 40%,rgba(200,150,47,.09),transparent 68%)," +
+            "radial-gradient(90% 110% at 50% 40%,rgba(244,241,234,.05),transparent 68%)," +
             "repeating-linear-gradient(0deg,rgba(0,0,0,.42) 0 2px,transparent 2px 26px)," +
             "repeating-linear-gradient(90deg,rgba(0,0,0,.34) 0 2px,transparent 2px 56px)," +
-            "linear-gradient(180deg,#1a1512,#100d0b 60%,#0b0a08)",
+            "linear-gradient(180deg,#161615,#0d0d0c 60%,#0a0a09)",
         }}
       />
       <div aria-hidden="true" className="grain pointer-events-none absolute inset-0 -z-10 opacity-60" />
 
       <div className="shell grid justify-items-center gap-[clamp(2rem,4vw,3rem)] py-[clamp(4rem,8vw,7rem)] text-center">
         <Reveal>
-          <NeonSign />
+          <OpenSign />
         </Reveal>
 
         <Reveal delay={1}>

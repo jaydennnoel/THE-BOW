@@ -72,7 +72,7 @@ export function Footer() {
       <div
         aria-hidden="true"
         className="h-1.5"
-        style={{ background: "linear-gradient(90deg,#7d2029,#c8962f 35%,#ece4d4 50%,#c8962f 65%,#7d2029)" }}
+        style={{ background: "linear-gradient(90deg,transparent,rgba(244,241,234,.5) 50%,transparent)" }}
       />
     </footer>
   );

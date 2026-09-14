@@ -68,7 +68,7 @@ export function Header() {
           </nav>
 
           <div className="flex items-center gap-3">
-            <a className="btn btn-brass btn-sm hidden xl:inline-flex" href="#menu">
+            <a className="btn btn btn-sm hidden xl:inline-flex" href="#menu">
               See the menu
             </a>
             <button
@@ -113,14 +113,14 @@ export function Header() {
             <a
               key={item.href}
               href={item.href}
-              className="flex items-baseline gap-4 border-b border-hair-soft py-1.5 font-display text-[clamp(2.4rem,13vw,3.5rem)] font-extrabold uppercase leading-tight transition-[opacity,transform,color] duration-[400ms] ease-cue active:text-brass"
+              className="flex items-baseline gap-4 border-b border-hair-soft py-1.5 font-display text-[clamp(2.4rem,13vw,3.5rem)] font-extrabold uppercase leading-tight transition-[opacity,transform,color] duration-[400ms] ease-cue active:text-cream"
               style={{
                 opacity: open ? 1 : 0,
                 transform: open ? "none" : "translateY(18px)",
                 transitionDelay: open ? `${60 + i * 45}ms` : "0ms",
               }}
             >
-              <i className="font-mono text-[.68rem] not-italic tracking-[.1em] text-brass">
+              <i className="font-mono text-[.68rem] not-italic tracking-[.1em] text-cream">
                 {String(i + 1).padStart(2, "0")}
               </i>
               {item.label}
@@ -129,7 +129,7 @@ export function Header() {
         </nav>
 
         <div className="grid gap-4 pt-8">
-          <a className="btn btn-brass w-full" href="#menu">
+          <a className="btn btn w-full" href="#menu">
             See the menu
           </a>
           <div className="flex gap-3">

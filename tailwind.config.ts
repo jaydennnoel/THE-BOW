@@ -15,19 +15,26 @@ export default {
   theme: {
     extend: {
       colors: {
-        ink: { DEFAULT: "#0b0a08", 2: "#121110", 3: "#1a1714" },
-        char: { DEFAULT: "#211d18", 2: "#2b251e" },
+        /**
+         * The Bow is black and white. Everything here is a neutral — the
+         * hierarchy comes from weight, scale and how much light a surface
+         * gets, not from hue.
+         */
+        ink: { DEFAULT: "#0a0a09", 2: "#111110", 3: "#181817" },
+        char: { DEFAULT: "#1f1f1d", 2: "#2a2a27" },
         cream: {
-          DEFAULT: "#ece4d4",
-          dim: "rgba(236,228,212,.66)",
-          faint: "rgba(236,228,212,.38)",
+          DEFAULT: "#f4f1ea",
+          dim: "rgba(244,241,234,.66)",
+          faint: "rgba(244,241,234,.4)",
         },
-        brass: { DEFAULT: "#c8962f", lit: "#e3b755", deep: "#8a6318" },
-        oxblood: { DEFAULT: "#7d2029", lit: "#a63340" },
-        rust: "#a8481f",
+        /**
+         * The one exception, and it is a physical object rather than a brand
+         * colour: the glass in the OPEN sign hanging in the window.
+         */
+        sign: { red: "#ff2f1c", ice: "#cfeaff" },
+        /** The cloth on the table, used by the hero canvas. */
         felt: { DEFAULT: "#1f7a3f", lit: "#2f9e55", deep: "#12452a" },
-        neon: { pink: "#ff4d8d", warm: "#ffd9a8", ice: "#8fe6ff" },
-        hair: { DEFAULT: "rgba(236,228,212,.15)", soft: "rgba(236,228,212,.07)" },
+        hair: { DEFAULT: "rgba(244,241,234,.15)", soft: "rgba(244,241,234,.07)" },
       },
       fontFamily: {
         display: ['"Big Shoulders Display"', "Haettenschweiler", '"Arial Narrow"', "sans-serif"],
@@ -51,7 +58,7 @@ export default {
       transitionTimingFunction: { cue: "cubic-bezier(.22,.61,.36,1)" },
       boxShadow: {
         lift: "0 30px 70px -30px rgba(0,0,0,.95)",
-        inset: "inset 0 1px 0 rgba(236,228,212,.08)",
+        inset: "inset 0 1px 0 rgba(244,241,234,.08)",
       },
       keyframes: {
         fadeUp: {
@@ -61,9 +68,8 @@ export default {
         marquee: { from: { transform: "translateX(0)" }, to: { transform: "translateX(-50%)" } },
         /** A tube that never quite settled after it warmed up. */
         flicker: {
-          "0%,18%,22%,25%,53%,57%,100%": { opacity: "1" },
-          "20%,23.5%,55%": { opacity: ".28" },
-          "56%": { opacity: ".7" },
+          "0%,31%,33.5%,36%,72%,74%,100%": { opacity: "1" },
+          "32%,35%,73%": { opacity: ".34" },
         },
         /** The slow breathing of a transformer under load. */
         hum: {

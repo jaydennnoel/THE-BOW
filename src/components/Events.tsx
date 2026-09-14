@@ -11,8 +11,8 @@ export function Events() {
       className="relative isolate overflow-hidden py-section"
       style={{
         background:
-          "radial-gradient(65% 55% at 85% 8%,rgba(168,72,31,.22),transparent 62%)," +
-          "radial-gradient(55% 50% at 8% 92%,rgba(200,150,47,.14),transparent 62%),#121110",
+          "radial-gradient(65% 55% at 85% 8%,rgba(244,241,234,.05),transparent 62%)," +
+          "radial-gradient(55% 50% at 8% 92%,rgba(244,241,234,.06),transparent 62%),#111110",
       }}
     >
       <div className="shell relative">

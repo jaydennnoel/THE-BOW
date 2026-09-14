@@ -5,9 +5,9 @@ import { Reveal } from "./ui/Reveal";
 
 /** The whole booking flow, replaced: three steps and none of them is a form. */
 const STEPS = [
-  { n: "1", label: "Walk in", body: "No booking, no deposit, no confirmation email.", accent: "#e0ad42" },
-  { n: "2", label: "Name on the board", body: "Chalk it up by the rack. We call it when a table clears.", accent: "#47ad66" },
-  { n: "3", label: "Rack 'em", body: "Play as long as you're winning. Food and drinks come to you.", accent: "#cf5a68" },
+  { n: "1", label: "Walk in", body: "No booking, no deposit, no confirmation email.", accent: "#f4f1ea" },
+  { n: "2", label: "Name on the board", body: "Chalk it up by the rack. We call it when a table clears.", accent: "#f4f1ea" },
+  { n: "3", label: "Rack 'em", body: "Play as long as you're winning. Food and drinks come to you.", accent: "#f4f1ea" },
 ];
 
 export function Pool() {
@@ -17,8 +17,8 @@ export function Pool() {
       className="relative isolate overflow-hidden border-y border-hair-soft py-section"
       style={{
         background:
-          "radial-gradient(75% 60% at 12% 15%,rgba(31,122,63,.28),transparent 62%)," +
-          "radial-gradient(60% 55% at 88% 80%,rgba(168,72,31,.22),transparent 65%),#0b0a08",
+          "radial-gradient(75% 60% at 12% 15%,rgba(244,241,234,.06),transparent 62%)," +
+          "radial-gradient(60% 55% at 88% 80%,rgba(244,241,234,.05),transparent 65%),#0a0a09",
       }}
     >
       <div aria-hidden="true" className="checker pointer-events-none absolute inset-0 opacity-40" />
@@ -29,7 +29,7 @@ export function Pool() {
           <h2 className="display mb-5 text-h2">
             No bookings.
             <br />
-            <span className="text-brass">Just turn up.</span>
+            <span className="text-cream">Just turn up.</span>
           </h2>
           <Lead>
             Tournament-grade tables, fresh felt and good light overhead. We don't hold tables and we
@@ -59,7 +59,7 @@ export function Pool() {
           </ul>
 
           <div className="flex flex-wrap gap-2.5">
-            <a className="btn btn-brass" href="#events">
+            <a className="btn btn" href="#events">
               League &amp; tournament nights
             </a>
             <a className="btn btn-ghost" href={site.contact.phoneHref}>
@@ -98,20 +98,20 @@ export function Pool() {
               height={800}
               loading="lazy"
               decoding="async"
-              className="aspect-[16/10] h-auto w-full object-cover brightness-[.78] saturate-[1.35] transition-[transform,filter] duration-[1200ms] ease-cue group-hover:scale-[1.04] group-hover:brightness-95"
+              className="aspect-[16/10] h-auto w-full object-cover grayscale brightness-[.82] contrast-[1.1] transition-[transform,filter] duration-[1200ms] ease-cue group-hover:scale-[1.04] group-hover:grayscale-0 group-hover:brightness-95"
             />
             <div
               aria-hidden="true"
               className="pointer-events-none absolute inset-0"
               style={{
                 background:
-                  "linear-gradient(180deg,rgba(7,6,12,0) 40%,rgba(7,6,12,.88) 100%)," +
-                  "radial-gradient(70% 60% at 50% 0%,rgba(200,150,47,.2),transparent 70%)",
+                  "linear-gradient(180deg,rgba(10,10,9,0) 40%,rgba(10,10,9,.88) 100%)," +
+                  "radial-gradient(70% 60% at 50% 0%,rgba(244,241,234,.07),transparent 70%)",
               }}
             />
             <figcaption className="absolute inset-x-0 bottom-0 flex flex-wrap items-center justify-between gap-3 px-[clamp(1rem,2vw,1.5rem)] pb-[clamp(1rem,2vw,1.4rem)] font-mono text-[.66rem] uppercase leading-none tracking-[.18em]">
               <span className="text-cream">The back room</span>
-              <span className="text-brass">Table count to be confirmed</span>
+              <span className="text-cream">Table count to be confirmed</span>
             </figcaption>
           </figure>
         </Reveal>
