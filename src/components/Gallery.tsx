@@ -10,7 +10,7 @@ export function Gallery() {
       className="relative isolate overflow-hidden py-section"
       style={{
         background:
-          "radial-gradient(50% 45% at 50% 0%,rgba(244,241,234,.05),transparent 65%),#0a0a09",
+          "radial-gradient(50% 45% at 50% 0%,rgba(140,122,92,.07),transparent 65%),#0a0a09",
       }}
     >
       <div className="shell relative">
@@ -29,7 +29,7 @@ export function Gallery() {
                   alt={tile.alt}
                   loading="lazy"
                   decoding="async"
-                  className="h-full w-full object-cover grayscale brightness-[.9] contrast-[1.12] transition-[transform,filter] duration-[1100ms] ease-cue group-hover:scale-[1.06] group-hover:grayscale-0 group-hover:brightness-105 group-focus-within:scale-[1.06] group-focus-within:grayscale-0"
+                  className="h-full w-full object-cover grayscale sepia-[.35] brightness-[.9] contrast-[1.12] transition-[transform,filter] duration-[1100ms] ease-cue group-hover:scale-[1.06] group-hover:grayscale-0 group-hover:sepia-0 group-hover:brightness-105 group-focus-within:scale-[1.06] group-focus-within:grayscale-0 group-focus-within:sepia-0"
                 />
                 <figcaption className="pointer-events-none absolute inset-x-0 bottom-0 translate-y-2 bg-gradient-to-t from-ink/90 to-transparent px-4 pb-3.5 pt-6 font-mono text-[.64rem] uppercase leading-none tracking-[.18em] text-cream opacity-0 transition-[opacity,transform] duration-[400ms] ease-cue group-hover:translate-y-0 group-hover:opacity-100">
                   {tile.caption}

@@ -16,9 +16,15 @@ export default {
     extend: {
       colors: {
         /**
-         * The Bow is black and white. Everything here is a neutral — the
-         * hierarchy comes from weight, scale and how much light a surface
-         * gets, not from hue.
+         * The Bow's wordmark is black and white, and the page is built on
+         * neutrals. The accents are the things in the room that have aged:
+         * tarnished brass on the rail, brick, spilled wine soaked into wood,
+         * a bottle held up to the light, nicotine on the ceiling.
+         *
+         * All of them are dulled on purpose — nothing here is saturated
+         * enough to read as a highlighter. Where an accent carries text it
+         * clears WCAG AA on the panel it sits on; `oxblood` is deliberately
+         * too dark for that and is only ever used as a fill, edge or wash.
          */
         ink: { DEFAULT: "#0a0a09", 2: "#111110", 3: "#181817" },
         char: { DEFAULT: "#1f1f1d", 2: "#2a2a27" },
@@ -27,11 +33,13 @@ export default {
           dim: "rgba(244,241,234,.66)",
           faint: "rgba(244,241,234,.4)",
         },
-        /**
-         * The one exception, and it is a physical object rather than a brand
-         * colour: the glass in the OPEN sign hanging in the window.
-         */
-        sign: { red: "#ff2f1c", ice: "#cfeaff" },
+        brass: { DEFAULT: "#b0913f", lit: "#c9ab5c", deep: "#6f5a25" },
+        clay: "#a85f43",
+        bottle: { DEFAULT: "#5c7a52", lit: "#7b9c6e" },
+        tobacco: "#8c7a5c",
+        oxblood: { DEFAULT: "#7a3038", lit: "#9c5a52" },
+        /** The one lit object on the page: the sign hanging in the window. */
+        sign: { red: "#ef3b22", ice: "#cfeaff" },
         /** The cloth on the table, used by the hero canvas. */
         felt: { DEFAULT: "#1f7a3f", lit: "#2f9e55", deep: "#12452a" },
         hair: { DEFAULT: "rgba(244,241,234,.15)", soft: "rgba(244,241,234,.07)" },

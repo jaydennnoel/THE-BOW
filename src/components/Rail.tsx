@@ -1,9 +1,9 @@
 /** The storefront sign, scrolling. Three words, in neon, on repeat. */
 const WORDS = [
-  { text: "Burgers", dim: false },
-  { text: "Brews", dim: true },
-  { text: "Billiards", dim: false },
-  { text: "Walk-ins only", dim: true },
+  { text: "Burgers", tone: "text-cream" },
+  { text: "Brews", tone: "text-brass" },
+  { text: "Billiards", tone: "text-cream" },
+  { text: "Walk-ins only", tone: "text-tobacco" },
 ];
 
 export function Rail() {
@@ -21,13 +21,11 @@ export function Rail() {
         {run.map((w, i) => (
           <span
             key={`${w.text}-${i}`}
-            className={`flex flex-none items-center gap-[clamp(1.5rem,4vw,3.5rem)] font-display text-[clamp(1.1rem,.9rem+.8vw,1.6rem)] font-extrabold uppercase leading-none tracking-[.14em] ${
-              w.dim ? "text-cream-faint" : "text-cream"
-            }`}
+            className={`flex flex-none items-center gap-[clamp(1.5rem,4vw,3.5rem)] font-display text-[clamp(1.1rem,.9rem+.8vw,1.6rem)] font-extrabold uppercase leading-none tracking-[.14em] ${w.tone}`}
           >
             {w.text}
             <i
-              className="h-1.5 w-1.5 flex-none rotate-45 bg-current opacity-70"
+              className="h-1.5 w-1.5 flex-none rotate-45 bg-current opacity-60"
               style={{ borderRadius: "1px" }}
             />
           </span>

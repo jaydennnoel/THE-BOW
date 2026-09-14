@@ -11,8 +11,8 @@ export function Events() {
       className="relative isolate overflow-hidden py-section"
       style={{
         background:
-          "radial-gradient(65% 55% at 85% 8%,rgba(244,241,234,.05),transparent 62%)," +
-          "radial-gradient(55% 50% at 8% 92%,rgba(244,241,234,.06),transparent 62%),#111110",
+          "radial-gradient(65% 55% at 85% 8%,rgba(140,122,92,.07),transparent 62%)," +
+          "radial-gradient(55% 50% at 8% 92%,rgba(122,48,56,.1),transparent 62%),#111110",
       }}
     >
       <div className="shell relative">
@@ -47,10 +47,7 @@ export function Events() {
                 />
                 <div className="font-display text-[clamp(1.4rem,1.2rem+.6vw,1.75rem)] font-extrabold uppercase leading-[.95] tracking-[.01em]">
                   {ev.when}
-                  <small
-                    className="mt-2 block font-mono text-[.64rem] font-normal leading-none tracking-[.16em]"
-                    style={{ color: ev.accent }}
-                  >
+                  <small className="mt-2 block font-mono text-[.64rem] font-normal leading-none tracking-[.16em] text-brass">
                     {ev.cadence}
                   </small>
                 </div>

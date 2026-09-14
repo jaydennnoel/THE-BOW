@@ -23,8 +23,8 @@ export function Contact() {
       className="relative isolate overflow-hidden py-section"
       style={{
         background:
-          "radial-gradient(60% 50% at 85% 12%,rgba(244,241,234,.06),transparent 65%)," +
-          "radial-gradient(55% 45% at 10% 90%,rgba(244,241,234,.06),transparent 65%),#0a0a09",
+          "radial-gradient(60% 50% at 85% 12%,rgba(122,48,56,.1),transparent 65%)," +
+          "radial-gradient(55% 45% at 10% 90%,rgba(122,48,56,.1),transparent 65%),#0a0a09",
       }}
     >
       <div className="shell relative">
@@ -53,7 +53,7 @@ export function Contact() {
                   href={site.contact.mapsUrl}
                   target="_blank"
                   rel="noopener"
-                  className="transition-colors hover:text-cream"
+                  className="transition-colors hover:text-brass-lit"
                 >
                   {site.contact.address1}
                   <br />
@@ -61,12 +61,12 @@ export function Contact() {
                 </a>
               </Row>
               <Row label="Phone">
-                <a href={site.contact.phoneHref} className="transition-colors hover:text-cream">
+                <a href={site.contact.phoneHref} className="transition-colors hover:text-brass-lit">
                   {site.contact.phoneLabel}
                 </a>
               </Row>
               <Row label="Email">
-                <a href={site.contact.emailHref} className="transition-colors hover:text-cream">
+                <a href={site.contact.emailHref} className="transition-colors hover:text-brass-lit">
                   {site.contact.emailLabel}
                 </a>
               </Row>
@@ -93,7 +93,7 @@ export function Contact() {
             {/* No booking, nothing to submit — the door is the whole system. */}
             <div
               className="panel grid gap-4 p-[clamp(1.6rem,3vw,2.4rem)]"
-              style={{ ["--edge" as string]: "#f4f1ea" }}
+              style={{ ["--edge" as string]: "#b0913f" }}
             >
               <span className="font-mono text-[.66rem] uppercase leading-none tracking-[.22em] text-cream">
                 How it works

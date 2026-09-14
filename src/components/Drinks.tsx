@@ -48,8 +48,8 @@ export function Drinks() {
       className="py-section"
       style={{
         background:
-          "radial-gradient(60% 50% at 85% 15%,rgba(244,241,234,.07),transparent 65%)," +
-          "radial-gradient(55% 50% at 10% 80%,rgba(244,241,234,.06),transparent 65%)," +
+          "radial-gradient(60% 50% at 85% 15%,rgba(176,145,63,.08),transparent 65%)," +
+          "radial-gradient(55% 50% at 10% 80%,rgba(122,48,56,.1),transparent 65%)," +
           "linear-gradient(180deg,#0a0a09,#111110)",
       }}
     >

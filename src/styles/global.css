@@ -32,11 +32,11 @@
   }
 
   ::selection {
-    @apply bg-cream text-ink;
+    @apply bg-brass text-ink;
   }
 
   :focus-visible {
-    outline: 2px solid theme("colors.cream.DEFAULT");
+    outline: 2px solid theme("colors.brass.lit");
     outline-offset: 3px;
     border-radius: 1px;
   }
@@ -90,7 +90,7 @@
   .btn::after {
     content: "";
     @apply absolute inset-0 -z-10 translate-y-full transition-transform duration-[420ms] ease-cue;
-    background: var(--btn-wipe, theme("colors.char.2"));
+    background: var(--btn-wipe, theme("colors.oxblood.DEFAULT"));
   }
   .btn:hover {
     @apply -translate-y-0.5 text-cream;
@@ -106,11 +106,11 @@
   .btn-ghost {
     --btn-bg: transparent;
     --btn-fg: theme("colors.cream.DEFAULT");
-    --btn-wipe: theme("colors.cream.DEFAULT");
+    --btn-wipe: theme("colors.brass.DEFAULT");
     @apply border border-hair;
   }
   .btn-ghost:hover {
-    @apply border-cream text-ink;
+    @apply border-brass text-ink;
   }
 
   .btn-sm {
@@ -122,7 +122,7 @@
            uppercase tracking-[.18em] text-cream transition-[gap,color,border-color] duration-300 ease-cue;
   }
   .linkline:hover {
-    @apply gap-[1.1rem] border-cream text-cream;
+    @apply gap-[1.1rem] border-brass text-brass-lit;
   }
 
   /* Dotted leader between a menu item and its price, like a printed board */
@@ -142,8 +142,8 @@
   .panel::before {
     content: "";
     @apply pointer-events-none absolute inset-x-0 top-0 h-px;
-    background: linear-gradient(90deg, transparent, theme("colors.cream.DEFAULT"), transparent);
-    opacity: 0.4;
+    background: linear-gradient(90deg, transparent, var(--edge, theme("colors.brass.DEFAULT")), transparent);
+    opacity: 0.6;
   }
 
   /* Scrolling sign rail */
