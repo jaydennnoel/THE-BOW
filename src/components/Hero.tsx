@@ -20,10 +20,12 @@ import {
   drawRoom,
   drawShadow,
   inDepthOrder,
+  dropRoomCache,
   makeCam,
   project,
 } from "@/lib/render";
 import type { Cam } from "@/lib/render";
+import { dropGlyphCache, dropShadeCache, dropSprites, setClothColour } from "@/lib/ball";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { Eyebrow } from "./ui/Eyebrow";
 
@@ -91,7 +93,14 @@ export function Hero() {
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
     const c = makeCam(w, h);
+    if (!cam.current || Math.abs(c.sin - cam.current.sin) > 1e-6) {
+      // the lighting tables are baked against the camera's pitch
+      dropShadeCache();
+      dropSprites();
+    }
+    dropRoomCache();
     cam.current = c;
+    setClothColour("#1f8a46");
 
     // two rows need real vertical room, so the name only breaks in two when
     // the frame is genuinely narrow; anything landscape-ish reads across
@@ -156,7 +165,7 @@ export function Hero() {
 
     const order = inDepthOrder(balls.current);
     for (const b of order) drawShadow(ctx, c, b);
-    for (const b of order) drawBall(ctx, c, b, focus.current);
+    for (const b of order) drawBall(ctx, c, b, focus.current, running.current);
 
     const cue = balls.current[balls.current.length - 1];
     if (running.current && cue && !cue.gone) {
@@ -303,7 +312,11 @@ export function Hero() {
     }
 
     // the printed faces are set in the display face — redraw once it arrives
+    // the printed faces are baked from the display face — the first sprites
+    // get the fallback, so throw them away once the real font lands
     document.fonts?.ready.then(() => {
+      dropGlyphCache();
+      dropSprites();
       if (!raf.current) paint();
     });
 

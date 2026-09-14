@@ -16,6 +16,8 @@
  * ─────────────────────────────────────────────────────────────────────────
  */
 
+import { easeTo, identity, restMatrix, spin } from "./ball";
+
 /* ── the cloth ────────────────────────────────────────────────────────── */
 
 /** Ball radius. Everything else is expressed in these. */
@@ -37,6 +39,8 @@ export const BED = {
 /* ── balls ────────────────────────────────────────────────────────────── */
 
 export interface Ball {
+  /** Stable across the whole sequence, so the sprite cache can key on it. */
+  id: string;
   x: number;
   z: number;
   vx: number;
@@ -48,11 +52,12 @@ export interface Ball {
   letter?: string;
   /** What's printed on the ball. */
   face: string;
-  /** Accumulated roll, radians. Drives the printed face and the stripe. */
-  roll: number;
-  /** Roll axis — the direction the ball was last travelling. */
-  rx: number;
-  rz: number;
+  /**
+   * How the ball is turned: a row-major 3×3 mapping the ball's own frame
+   * into the room. Rolling turns it; there is no separate "roll angle",
+   * because a ball that has been knocked about doesn't have one.
+   */
+  m: Float64Array;
   /** Resting slot, for the six that stay. */
   tx: number;
   tz: number;
@@ -96,6 +101,30 @@ const NAME_SLOTS = [0, 2, 6, 9, 11, 14];
 const EIGHT_SLOT = 4;
 
 /* ── the stroke ───────────────────────────────────────────────────────── */
+
+/**
+ * The camera's downward pitch. The renderer derives the exact figure from
+ * the viewport, but it only ever varies by a couple of degrees, and this is
+ * used solely to square the printed faces to the lens when the balls stop.
+ */
+export const CAM_PITCH = 0.23;
+const SQUARE = restMatrix(CAM_PITCH);
+
+/** How far a ball is from sitting with its number square to the camera. */
+function turned(m: Float64Array): number {
+  let d = 0;
+  for (let i = 0; i < 9; i++) d += Math.abs(m[i] - SQUARE[i]);
+  return d;
+}
+
+/** A ball racked at some arbitrary angle, as they always are. */
+function tumbled(seed: number): Float64Array {
+  const m = identity();
+  spin(m, 0, 1, 0, seed * 1.31);
+  spin(m, 1, 0, 0, seed * 0.77 + 0.4);
+  spin(m, 0, 0, 1, seed * 2.11);
+  return m;
+}
 
 export const CLOTH_DECEL = 96;    // units/s², cloth drag on a rolling ball
 export const BREAK_SPEED = 560;   // a hard, flat break
@@ -154,6 +183,7 @@ export function rack(stacked: boolean): Ball[] {
           : fill[fillIdx++];
 
     balls.push({
+      id: `b${i}`,
       x: pos[i].x,
       z: pos[i].z,
       vx: 0,
@@ -163,9 +193,7 @@ export function rack(stacked: boolean): Ball[] {
       cue: false,
       letter: nameIdx >= 0 ? NAME[nameIdx].ch : undefined,
       face: spec.face,
-      roll: (i * 1.7) % (Math.PI * 2),
-      rx: 0,
-      rz: 1,
+      m: tumbled(i),
       tx: nameIdx >= 0 ? slots[nameIdx].x : 0,
       tz: nameIdx >= 0 ? slots[nameIdx].z : 0,
       px: pos[i].x,
@@ -175,6 +203,7 @@ export function rack(stacked: boolean): Ball[] {
   }
 
   balls.push({
+    id: "cue",
     x: CUE_START.x,
     z: CUE_START.z,
     vx: 0,
@@ -183,9 +212,7 @@ export function rack(stacked: boolean): Ball[] {
     striped: false,
     cue: true,
     face: "",
-    roll: 0,
-    rx: 0,
-    rz: 1,
+    m: identity(),
     tx: 0,
     tz: 0,
     px: CUE_START.x,
@@ -243,9 +270,7 @@ export function settle(balls: Ball[]): void {
     b.z = b.tz;
     b.vx = 0;
     b.vz = 0;
-    b.roll = 0;
-    b.rx = 0;
-    b.rz = 1;
+    b.m = restMatrix(CAM_PITCH);
     b.px = b.x;
     b.pz = b.z;
   }
@@ -407,9 +432,9 @@ function substep(balls: Ball[], dt: number, t: number): boolean {
       } else {
         b.vx = (b.vx / sp) * next;
         b.vz = (b.vz / sp) * next;
-        b.rx = b.vx / next;
-        b.rz = b.vz / next;
-        b.roll += (next / R) * dt;
+        // rolling without slipping: v = omega x (contact point), which puts
+        // the axis flat on the cloth and square to the direction of travel
+        spin(b.m, -b.vz / next, 0, b.vx / next, (next / R) * dt);
         moving = true;
       }
     }
@@ -439,8 +464,8 @@ function substep(balls: Ball[], dt: number, t: number): boolean {
     }
 
     if (b.letter && assembling) {
-      // ease the printed face upright as the ball comes to rest
-      b.roll *= Math.pow(0.85, dt * 60);
+      // bring the printed face square to the lens as the ball comes to rest
+      easeTo(b.m, SQUARE, 1 - Math.pow(0.86, dt * 60));
       if (Math.abs(b.tx - b.x) + Math.abs(b.tz - b.z) > 0.4) moving = true;
     }
   }
@@ -465,7 +490,7 @@ export function done(balls: Ball[]): boolean {
   for (const b of balls) {
     if (!b.letter) {
       if (!b.gone) return false;
-    } else if (Math.abs(b.tx - b.x) + Math.abs(b.tz - b.z) > 0.5 || Math.abs(b.roll) > 0.05) {
+    } else if (Math.abs(b.tx - b.x) + Math.abs(b.tz - b.z) > 0.5 || turned(b.m) > 0.02) {
       return false;
     }
   }
