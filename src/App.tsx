@@ -10,6 +10,7 @@ import { Events } from "./components/Events";
 import { Gallery } from "./components/Gallery";
 import { CtaBand } from "./components/CtaBand";
 import { Contact } from "./components/Contact";
+import { Doorway } from "./components/Doorway";
 import { Footer } from "./components/Footer";
 
 export default function App() {
@@ -47,10 +48,13 @@ export default function App() {
       <Header />
 
       <main id="main">
+        {/* the front door, then the counter… */}
         <Hero />
         <Rail />
         <About />
         <Menu />
+        {/* …then through to the back */}
+        <Doorway />
         <Drinks />
         <Pool />
         <Events />

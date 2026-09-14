@@ -7,7 +7,7 @@ import { Reveal } from "./ui/Reveal";
 const STEPS = [
   { n: "1", label: "Walk in", body: "No booking, no deposit, no confirmation email.", accent: "#b0913f" },
   { n: "2", label: "Name on the board", body: "Chalk it up by the rack. We call it when a table clears.", accent: "#a85f43" },
-  { n: "3", label: "Rack 'em", body: "Play as long as you're winning. Food and drinks come to you.", accent: "#5c7a52" },
+  { n: "3", label: "Rack 'em", body: "Play as long as you're winning. Put a song on while you wait.", accent: "#5c7a52" },
 ];
 
 export function Pool() {
@@ -32,8 +32,9 @@ export function Pool() {
             <span className="text-cream">Just turn up.</span>
           </h2>
           <Lead>
-            Tournament-grade tables, fresh felt and good light overhead. We don't hold tables and we
-            don't take reservations — the board by the rack sorts everyone out, same as it always has.
+            Tables everywhere, fresh felt and good light overhead. The TouchTunes runs the room and
+            the board by the rack runs the tables — we don't hold them and we don't take reservations,
+            same as it always has been.
           </Lead>
 
           <ul className="my-8 grid border-t border-hair">

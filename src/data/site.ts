@@ -144,9 +144,10 @@ export const drinks = [
 export const pool = [
   { n: "01", title: "Open play", body: "Put your name on the board and we'll shout when a table frees up. First come, first rack." },
   { n: "02", title: "Winner stays", body: "House rule on the front tables. Lose and you're back on the board — no hard feelings." },
-  { n: "03", title: "Leagues", body: "Weekly league nights for regulars. Ask the bar about picking up a spot on a team." },
-  { n: "04", title: "Tournaments", body: "Bracket nights with a sign-up sheet at the bar. Turn up early, the board fills fast." },
-  { n: "05", title: "Big groups", body: "Bring the whole crew — just tell the bar how many of you there are when you land." },
+  { n: "03", title: "TouchTunes", body: "The jukebox takes requests from your phone. Queue something decent and the whole room hears it." },
+  { n: "04", title: "Leagues", body: "Weekly league nights for regulars. Ask the bar about picking up a spot on a team." },
+  { n: "05", title: "Tournaments", body: "Bracket nights with a sign-up sheet at the bar. Turn up early, the board fills fast." },
+  { n: "06", title: "Big groups", body: "Bring the whole crew — just tell the bar how many of you there are when you land." },
 ] as const;
 
 /** PLACEHOLDER schedule — replace with the real calendar. */

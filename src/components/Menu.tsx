@@ -29,13 +29,11 @@ export function Menu() {
   return (
     <section
       id="menu"
-      className="relative isolate overflow-hidden py-section"
-      style={{
-        background:
-          "radial-gradient(55% 45% at 12% 10%,rgba(176,145,63,.08),transparent 62%)," +
-          "radial-gradient(50% 45% at 90% 85%,rgba(140,122,92,.07),transparent 62%),#111110",
-      }}
+      className="room-front relative isolate overflow-hidden py-section"
+      style={{ background: "linear-gradient(180deg,#fbf7ec,#f1ebdd)" }}
     >
+      {/* a strip of tile along the bottom of the wall */}
+      <div aria-hidden="true" className="tile absolute inset-x-0 bottom-0 h-3 opacity-[.85]" />
       <div className="shell relative">
         <SectionHead
           eyebrow="Kitchen"
@@ -55,7 +53,7 @@ export function Menu() {
         />
 
         <Reveal>
-          <div role="tablist" aria-label="Menu categories" onKeyDown={onKeyDown} className="mb-10 flex flex-wrap gap-1.5 border-b border-hair pb-3.5">
+          <div role="tablist" aria-label="Menu categories" onKeyDown={onKeyDown} className="mb-10 flex flex-wrap gap-1.5 border-b border-room-rule pb-3.5">
             {menu.map((cat) => {
               const on = cat.id === active;
               return (
@@ -69,7 +67,9 @@ export function Menu() {
                   tabIndex={on ? 0 : -1}
                   onClick={() => setActive(cat.id)}
                   className={`rounded-edge border border-transparent px-4 py-2.5 font-mono text-[.72rem] font-medium uppercase leading-none tracking-[.16em] transition-colors ${
-                    on ? "bg-cream text-ink shadow-inset" : "text-cream-faint hover:text-cream"
+                    on
+                      ? "bg-diner-ink text-diner-bone"
+                      : "text-room-faint hover:text-room-fg"
                   }`}
                 >
                   {cat.label}
@@ -90,20 +90,20 @@ export function Menu() {
             {columns.map((col, ci) => (
               <div key={ci}>
                 {col.map((item) => (
-                  <div key={item.name} className="grid gap-1.5 border-b border-hair-soft py-5 transition-[padding] duration-[350ms] ease-cue hover:pl-2.5">
+                  <div key={item.name} className="grid gap-1.5 border-b border-room-soft py-5 transition-[padding] duration-[350ms] ease-cue hover:pl-2.5">
                     <div className="flex items-baseline gap-3.5">
                       <span className="flex-none font-display text-[1.3rem] font-bold uppercase leading-none tracking-[.015em]">
                         {item.name}
                         {item.badge && (
-                          <span className="ml-2 rounded-edge border border-bottle-lit/60 px-1.5 py-1 align-middle font-mono text-[.58rem] font-medium uppercase tracking-[.14em] text-bottle-lit">
+                          <span className="ml-2 rounded-edge border border-diner-teal/50 px-1.5 py-1 align-middle font-mono text-[.58rem] font-medium uppercase tracking-[.14em] text-diner-teal">
                             {item.badge}
                           </span>
                         )}
                       </span>
                       <span aria-hidden="true" className="leader" />
-                      <span className="flex-none font-mono text-[.72rem] tracking-[.1em] text-brass">$—</span>
+                      <span className="flex-none font-mono text-[.72rem] tracking-[.1em] text-room-accent">$—</span>
                     </div>
-                    <p className="max-w-[46ch] text-[.95rem] text-cream-dim">{item.desc}</p>
+                    <p className="max-w-[46ch] text-[.95rem] text-room-dim">{item.desc}</p>
                   </div>
                 ))}
               </div>
@@ -111,8 +111,8 @@ export function Menu() {
           </div>
         </Reveal>
 
-        <Reveal className="mt-11 flex flex-wrap items-center justify-between gap-5 border-t border-hair pt-7">
-          <p className="font-mono text-[.72rem] leading-relaxed text-cream-faint">
+        <Reveal className="mt-11 flex flex-wrap items-center justify-between gap-5 border-t border-room-rule pt-7">
+          <p className="font-mono text-[.72rem] leading-relaxed text-room-faint">
             Menu items shown are placeholders. Allergies? Tell your server.
           </p>
           {/* TODO: point at the real menu page or PDF */}

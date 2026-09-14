@@ -43,6 +43,34 @@ export default {
         /** The cloth on the table, used by the hero canvas. */
         felt: { DEFAULT: "#1f7a3f", lit: "#2f9e55", deep: "#12452a" },
         hair: { DEFAULT: "rgba(244,241,234,.15)", soft: "rgba(244,241,234,.07)" },
+
+        /**
+         * The front room: an old diner. Formica, a bone counter, red vinyl
+         * booths, chrome edging and a strip of tile.
+         */
+        diner: {
+          cream: "#f1ebdd",
+          bone: "#fbf7ec",
+          ink: "#171612",
+          red: "#a8332e",
+          teal: "#35665f",
+          chrome: "#c5c9cb",
+        },
+
+        /**
+         * Room-aware tokens. Anything shared between the two halves of the
+         * page paints with these; a section sets which room it is in and the
+         * primitives inside it follow. Defaults are the back room, so the
+         * dark half needs no markup at all.
+         */
+        room: {
+          fg: "var(--fg)",
+          dim: "var(--fg-dim)",
+          faint: "var(--fg-faint)",
+          rule: "var(--rule)",
+          soft: "var(--rule-soft)",
+          accent: "var(--accent)",
+        },
       },
       fontFamily: {
         display: ['"Big Shoulders Display"', "Haettenschweiler", '"Arial Narrow"', "sans-serif"],

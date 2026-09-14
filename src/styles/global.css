@@ -3,13 +3,40 @@
 @tailwind utilities;
 
 /* ============================================================
+   ROOMS — the page is a walk through the building: you come in
+   to a diner at the front and end up in the back room among the
+   pool tables. These are the back room's values, so a dark
+   section needs to declare nothing.
+
+   Kept outside @layer so Tailwind can't tree-shake them.
+   ============================================================ */
+:root {
+  color-scheme: dark;
+
+  --fg: #f4f1ea;
+  --fg-dim: rgba(244, 241, 234, 0.66);
+  --fg-faint: rgba(244, 241, 234, 0.4);
+  --rule: rgba(244, 241, 234, 0.15);
+  --rule-soft: rgba(244, 241, 234, 0.07);
+  --accent: #b0913f;
+}
+
+/* Up front, under the counter lights */
+.room-front {
+  --fg: #171612;
+  --fg-dim: rgba(23, 22, 18, 0.74);
+  --fg-faint: rgba(23, 22, 18, 0.52);
+  --rule: rgba(23, 22, 18, 0.18);
+  --rule-soft: rgba(23, 22, 18, 0.09);
+  --accent: #a8332e;
+  color: var(--fg);
+}
+
+
+/* ============================================================
    BASE
    ============================================================ */
 @layer base {
-  :root {
-    color-scheme: dark;
-  }
-
   html {
     -webkit-text-size-adjust: 100%;
   }
@@ -68,6 +95,42 @@
     background-size: 26px 26px;
   }
 
+  /* Formica: a speckled counter top, close up */
+  .formica {
+    background-color: theme("colors.diner.cream");
+    background-image:
+      radial-gradient(circle at 12% 28%, rgba(23, 22, 18, 0.07) 0.9px, transparent 1.1px),
+      radial-gradient(circle at 68% 12%, rgba(168, 51, 46, 0.09) 0.8px, transparent 1px),
+      radial-gradient(circle at 41% 71%, rgba(53, 102, 95, 0.08) 0.9px, transparent 1.1px),
+      radial-gradient(circle at 86% 63%, rgba(23, 22, 18, 0.05) 0.7px, transparent 0.9px);
+    background-size: 37px 41px, 53px 47px, 61px 59px, 43px 67px;
+  }
+
+  /* A run of chrome edging, lit from above */
+  .chrome {
+    background: linear-gradient(
+      180deg,
+      #9aa0a3 0%,
+      #eef1f2 22%,
+      #ffffff 38%,
+      #b9bfc2 58%,
+      #7e8588 82%,
+      #d4d9db 100%
+    );
+  }
+
+  /* The tile underfoot, in black and white */
+  .tile {
+    background-image: conic-gradient(
+      from 90deg at 50% 50%,
+      theme("colors.diner.ink") 25%,
+      theme("colors.diner.bone") 0 50%,
+      theme("colors.diner.ink") 0 75%,
+      theme("colors.diner.bone") 0
+    );
+    background-size: 64px 64px;
+  }
+
   /* Paper grain, so the flat panels don't read as flat screens */
   .grain {
     background-image: repeating-linear-gradient(
@@ -117,22 +180,38 @@
     @apply min-h-[42px] px-4 text-[.7rem];
   }
 
+  /* In the diner the solid button inverts: dark on the bone counter */
+  .room-front .btn {
+    --btn-bg: theme("colors.diner.ink");
+    --btn-fg: theme("colors.diner.bone");
+    --btn-wipe: theme("colors.diner.red");
+  }
+  .room-front .btn:hover {
+    color: theme("colors.diner.bone");
+  }
+  .room-front .btn-ghost {
+    --btn-bg: transparent;
+    --btn-fg: theme("colors.diner.ink");
+    --btn-wipe: theme("colors.diner.red");
+    border-color: var(--rule);
+  }
+  .room-front .btn-ghost:hover {
+    border-color: theme("colors.diner.red");
+    color: theme("colors.diner.bone");
+  }
+
   .linkline {
-    @apply inline-flex items-center gap-3 border-b border-hair pb-2 font-mono text-[.74rem]
-           uppercase tracking-[.18em] text-cream transition-[gap,color,border-color] duration-300 ease-cue;
+    @apply inline-flex items-center gap-3 border-b border-room-rule pb-2 font-mono text-[.74rem]
+           uppercase tracking-[.18em] text-room-fg transition-[gap,color,border-color] duration-300 ease-cue;
   }
   .linkline:hover {
-    @apply gap-[1.1rem] border-brass text-brass-lit;
+    @apply gap-[1.1rem] border-room-accent text-room-accent;
   }
 
   /* Dotted leader between a menu item and its price, like a printed board */
   .leader {
     @apply h-px flex-1 -translate-y-[3px];
-    background: repeating-linear-gradient(
-      90deg,
-      theme("colors.hair.DEFAULT") 0 2px,
-      transparent 2px 6px
-    );
+    background: repeating-linear-gradient(90deg, var(--rule) 0 2px, transparent 2px 6px);
   }
 
   /* Edge-lit panel — the workhorse card */

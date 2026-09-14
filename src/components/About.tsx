@@ -5,71 +5,76 @@ import { SectionHead } from "./ui/SectionHead";
 
 export function About() {
   return (
-    <section
-      id="about"
-      className="relative isolate overflow-hidden py-section"
-      style={{
-        background:
-          "radial-gradient(60% 50% at 88% 18%,rgba(122,48,56,.1),transparent 62%)," +
-          "linear-gradient(180deg,#0a0a09,#111110)",
-      }}
-    >
+    <section id="about" className="room-front formica relative isolate overflow-hidden py-section">
+      {/* the counter lights, pooling down the wall */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0"
+        style={{
+          background:
+            "radial-gradient(80% 45% at 50% -6%,rgba(255,250,232,.85),transparent 62%)," +
+            "radial-gradient(50% 40% at 88% 82%,rgba(168,51,46,.07),transparent 68%)",
+        }}
+      />
       <div className="shell relative">
         <SectionHead
           eyebrow="The place"
           title={
             <>
-              More than
-              <br />a bar.
+              A diner up front.
+              <br />A bar out back.
             </>
           }
           aside={
             <Lead>
-              Dinner with friends, a beer while the game's on, and a table in the back that stays busy until close. The
-              Bow is one room that does all three without asking you to choose.
+              Two rooms and one door between them. Come in for a burger at the counter, or keep walking
+              and spend the night on the felt — nobody minds which.
             </Lead>
           }
         />
 
         <div className="grid gap-[clamp(2rem,4vw,3.5rem)] lg:grid-cols-[1.05fr_.95fr] lg:items-center">
           <Reveal className="relative">
-            <div className="group relative overflow-hidden rounded-edge bg-char">
+            <div className="group relative overflow-hidden rounded-edge bg-diner-ink/10 shadow-lift">
               <img
-                src="/images/tables.webp"
-                alt="Pool tables lit by low hanging lamps above a black and white checkerboard floor inside The Bow."
+                src="/images/window.webp"
+                alt="The Bow's window lettering reading burgers, brews, billiards, with the street outside."
                 width={887}
                 height={1108}
                 loading="lazy"
                 decoding="async"
-                className="aspect-[4/5] h-auto w-full object-cover grayscale sepia-[.35] brightness-95 contrast-[1.1] transition-[transform,filter] duration-[1200ms] ease-cue group-hover:scale-[1.035] group-hover:grayscale-0 group-hover:sepia-0 group-hover:brightness-105"
+                className="aspect-[4/5] h-auto w-full object-cover sepia-[.45] saturate-[.8] contrast-[1.05] transition-[transform,filter] duration-[1200ms] ease-cue group-hover:scale-[1.035] group-hover:sepia-0 group-hover:saturate-100"
               />
             </div>
-            <div className="relative mt-2 w-full overflow-hidden rounded-edge border-0 sm:absolute sm:-bottom-[8%] sm:-right-[6%] sm:mt-0 sm:w-[min(46%,260px)] sm:border-[6px] sm:border-ink-2 sm:shadow-[0_24px_60px_-20px_rgba(0,0,0,.9)]">
+            <div className="relative mt-2 w-full overflow-hidden rounded-edge border-0 sm:absolute sm:-bottom-[8%] sm:-right-[6%] sm:mt-0 sm:w-[min(46%,260px)] sm:border-[6px] sm:border-diner-bone sm:shadow-[0_24px_60px_-20px_rgba(0,0,0,.9)]">
               <img
                 src="/images/sign.webp"
-                alt="The Bow storefront sign reading burgers, brews, billiards above the entrance."
+                alt="The Bow's exterior sign mounted on white brick above the entrance."
                 width={542}
                 height={542}
                 loading="lazy"
                 decoding="async"
-                className="aspect-video h-auto w-full object-cover grayscale sepia-[.35] contrast-[1.1] sm:aspect-square"
+                className="aspect-video h-auto w-full object-cover sepia-[.45] saturate-[.8] contrast-[1.05] sm:aspect-square"
               />
             </div>
           </Reveal>
 
           <Reveal delay={2} className="grid gap-6">
             <p>
-              The room is simple on purpose: checkerboard floors, wood paneling, low light over the felt. Grab a booth
-              and order food, pull up to the bar, or put your name on a table and play until someone finally beats you.
+              Out front it's an old diner and it has never pretended otherwise: a counter, booths along the
+              window, tile underfoot and a kitchen that sends out burgers all day.
             </p>
-            <p>No dress code, no velvet rope, no reservation to lose. Just a good room to spend a few hours in.</p>
+            <p>
+              Head through the back and the light drops away. That half is a dive bar — tables
+              everywhere, the jukebox going, and a board by the rack instead of a booking system.
+            </p>
 
-            <ul className="mt-1.5 grid border-t border-hair">
+            <ul className="mt-1.5 grid border-t border-room-rule">
               {about.map((row) => (
-                <li key={row.n} className="grid grid-cols-[auto_1fr] items-baseline gap-5 border-b border-hair py-[1.15rem]">
-                  <b className="font-mono text-[.68rem] font-normal leading-none tracking-[.14em] text-brass">{row.n}</b>
-                  <span className="text-[.98rem] text-cream-dim">
-                    <strong className="mb-1 block font-display text-[1.15rem] font-bold uppercase leading-tight tracking-[.02em] text-cream">
+                <li key={row.n} className="grid grid-cols-[auto_1fr] items-baseline gap-5 border-b border-room-rule py-[1.15rem]">
+                  <b className="font-mono text-[.68rem] font-normal leading-none tracking-[.14em] text-room-accent">{row.n}</b>
+                  <span className="text-[.98rem] text-room-dim">
+                    <strong className="mb-1 block font-display text-[1.15rem] font-bold uppercase leading-tight tracking-[.02em] text-room-fg">
                       {row.title}
                     </strong>
                     {row.body}
