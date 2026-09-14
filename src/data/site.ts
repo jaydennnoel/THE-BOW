@@ -48,7 +48,7 @@ export const site = {
 } as const;
 
 export const about = [
-  { n: "01", title: "Eat", body: "Burgers off the flat top, shareables for the table, and a kitchen that runs late." },
+  { n: "01", title: "Eat", body: "The burgers are what people come for. Shareables for the table, and a kitchen that runs late." },
   { n: "02", title: "Drink", body: "Draft and bottled beer, house cocktails, wine, and something for whoever's driving." },
   { n: "03", title: "Play", body: "Tournament-grade tables, open play all week, plus leagues and tournament nights. Walk-ins only." },
 ] as const;
@@ -67,6 +67,18 @@ export interface MenuCategory {
 /** PLACEHOLDER menu — swap in the real board. Prices intentionally blank. */
 export const menu: MenuCategory[] = [
   {
+    id: "burgers",
+    label: "Burgers",
+    items: [
+      { name: "The Bow burger", desc: "Double smash patty, American, pickle, house sauce.", badge: "House" },
+      { name: "Bacon & cheddar", desc: "Thick-cut bacon, sharp cheddar, crispy onion." },
+      { name: "Mushroom swiss", desc: "Sautéed mushrooms, swiss, garlic aioli." },
+      { name: "Jalapeño smash", desc: "Pepper jack, jalapeño, chipotle mayo." },
+      { name: "Patty melt", desc: "Griddled rye, caramelized onion, swiss." },
+      { name: "Black bean burger", desc: "House black bean patty, avocado, lime crema.", badge: "Veg" },
+    ],
+  },
+  {
     id: "starters",
     label: "Starters",
     items: [
@@ -76,18 +88,6 @@ export const menu: MenuCategory[] = [
       { name: "Wings", desc: "Six or twelve. Buffalo, dry rub, or gold sauce." },
       { name: "Onion rings", desc: "Thick cut, beer battered." },
       { name: "Chips & queso", desc: "Warm queso, pickled jalapeño." },
-    ],
-  },
-  {
-    id: "burgers",
-    label: "Burgers",
-    items: [
-      { name: "The Bow burger", desc: "Double smash patty, American, pickle, house sauce." },
-      { name: "Bacon & cheddar", desc: "Thick-cut bacon, sharp cheddar, crispy onion." },
-      { name: "Mushroom swiss", desc: "Sautéed mushrooms, swiss, garlic aioli." },
-      { name: "Jalapeño smash", desc: "Pepper jack, jalapeño, chipotle mayo." },
-      { name: "Patty melt", desc: "Griddled rye, caramelized onion, swiss." },
-      { name: "Black bean burger", desc: "House black bean patty, avocado, lime crema.", badge: "Veg" },
     ],
   },
   {

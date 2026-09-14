@@ -49,11 +49,23 @@ export default {
          * booths, chrome edging and a strip of tile.
          */
         diner: {
-          cream: "#f1ebdd",
-          bone: "#fbf7ec",
-          ink: "#171612",
-          red: "#a8332e",
-          teal: "#35665f",
+          /**
+           * A southern diner, lit by warm bulbs rather than daylight: oat
+           * walls, a butter panel, tomato and teal trim, mustard, and dark
+           * walnut. The ground is deliberately well off white — the room
+           * should feel warm, not bleached.
+           */
+          oat: "#e3d2ae",
+          butter: "#efe2c4",
+          ink: "#241a12",
+          /** Tomato. The deep one carries small type; the bright one is trim. */
+          red: "#a3281c",
+          "red-lit": "#bf3b2c",
+          /** Turquoise vinyl. Same split. */
+          teal: "#17605c",
+          "teal-lit": "#2e8b88",
+          mustard: "#c98f21",
+          walnut: "#5a3a24",
           chrome: "#c5c9cb",
         },
 

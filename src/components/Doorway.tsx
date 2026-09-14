@@ -13,7 +13,7 @@ export function Doorway() {
     <section
       aria-labelledby="doorway-heading"
       className="relative isolate overflow-hidden"
-      style={{ background: "linear-gradient(180deg,#f1ebdd 0%,#e2d9c6 24%,#4a4136 58%,#0a0a09 100%)" }}
+      style={{ background: "linear-gradient(180deg,#e3d2ae 0%,#c9b48c 22%,#5a3a24 52%,#1b1410 78%,#0a0a09 100%)" }}
     >
       {/* still in the diner here, so the type is dark on the light end */}
       <div className="room-front shell relative z-[2] grid justify-items-center gap-5 pb-[clamp(2rem,5vw,3.5rem)] pt-[clamp(4rem,9vw,7rem)] text-center">
@@ -25,7 +25,7 @@ export function Doorway() {
         </Reveal>
         <Reveal delay={1}>
           <h2 id="doorway-heading" className="display max-w-[15ch] text-h2 text-room-fg">
-            Out back it&rsquo;s a different bar.
+            Out back it&rsquo;s a <span className="text-diner-red">different bar.</span>
           </h2>
         </Reveal>
         <Reveal delay={2}>

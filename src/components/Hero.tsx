@@ -383,7 +383,7 @@ export function Hero() {
               Eat. Drink. <span className="text-cream">Rack 'em.</span>
             </p>
             <p className="max-w-[46ch] text-[clamp(.95rem,.92rem+.2vw,1.08rem)] text-cream-dim">
-              Burgers off the flat top, cold beer, and a room full of open tables. No bookings — walk
+The burgers people come for, cold beer, and a back room full of open tables. No bookings — walk
               in and put your name up.
             </p>
             <div className="mt-7 flex flex-wrap gap-2.5">

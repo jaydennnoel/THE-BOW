@@ -30,30 +30,35 @@ export function Menu() {
     <section
       id="menu"
       className="room-front relative isolate overflow-hidden py-section"
-      style={{ background: "linear-gradient(180deg,#fbf7ec,#f1ebdd)" }}
+      style={{ background: "linear-gradient(180deg,#efe2c4,#e3d2ae 62%,#dcc9a1)" }}
     >
-      {/* a strip of tile along the bottom of the wall */}
-      <div aria-hidden="true" className="tile absolute inset-x-0 bottom-0 h-3 opacity-[.85]" />
+      {/* trim at the top of the wall, tile along the bottom of it */}
+      <div aria-hidden="true" className="trim absolute inset-x-0 top-0 h-[9px]" />
+      <div aria-hidden="true" className="tile absolute inset-x-0 bottom-0 h-[clamp(1.25rem,2.4vw,2rem)] opacity-90" />
       <div className="shell relative">
         <SectionHead
-          eyebrow="Kitchen"
+          eyebrow="The kitchen"
           title={
             <>
-              Food worth
+              Known for
               <br />
-              sitting down for.
+              <span className="text-diner-red">the burgers.</span>
             </>
           }
           aside={
             <div className="grid justify-items-start gap-5">
-              <Lead>Bar food done properly. Everything's made to order, so it comes out hot and it takes a minute.</Lead>
+              <Lead>
+                People come in for the burgers and stay for everything else. It's all made to order,
+                so it comes out hot and it takes a minute. Grab any free table — we don't seat by
+                reservation.
+              </Lead>
               <Tag>Placeholder menu — swap in real items &amp; pricing</Tag>
             </div>
           }
         />
 
         <Reveal>
-          <div role="tablist" aria-label="Menu categories" onKeyDown={onKeyDown} className="mb-10 flex flex-wrap gap-1.5 border-b border-room-rule pb-3.5">
+          <div role="tablist" aria-label="Menu categories" onKeyDown={onKeyDown} className="mb-10 flex flex-wrap gap-1.5 border-b-[3px] border-diner-teal-lit pb-3.5">
             {menu.map((cat) => {
               const on = cat.id === active;
               return (
@@ -68,7 +73,7 @@ export function Menu() {
                   onClick={() => setActive(cat.id)}
                   className={`rounded-edge border border-transparent px-4 py-2.5 font-mono text-[.72rem] font-medium uppercase leading-none tracking-[.16em] transition-colors ${
                     on
-                      ? "bg-diner-ink text-diner-bone"
+                      ? "bg-diner-red text-diner-butter"
                       : "text-room-faint hover:text-room-fg"
                   }`}
                 >
@@ -95,7 +100,7 @@ export function Menu() {
                       <span className="flex-none font-display text-[1.3rem] font-bold uppercase leading-none tracking-[.015em]">
                         {item.name}
                         {item.badge && (
-                          <span className="ml-2 rounded-edge border border-diner-teal/50 px-1.5 py-1 align-middle font-mono text-[.58rem] font-medium uppercase tracking-[.14em] text-diner-teal">
+                          <span className="ml-2 rounded-edge border border-diner-teal/60 bg-diner-teal/10 px-1.5 py-1 align-middle font-mono text-[.58rem] font-medium uppercase tracking-[.14em] text-diner-teal">
                             {item.badge}
                           </span>
                         )}

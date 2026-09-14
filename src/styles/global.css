@@ -23,12 +23,12 @@
 
 /* Up front, under the counter lights */
 .room-front {
-  --fg: #171612;
-  --fg-dim: rgba(23, 22, 18, 0.74);
-  --fg-faint: rgba(23, 22, 18, 0.52);
-  --rule: rgba(23, 22, 18, 0.18);
-  --rule-soft: rgba(23, 22, 18, 0.09);
-  --accent: #a8332e;
+  --fg: #241a12;
+  --fg-dim: rgba(36, 26, 18, 0.76);
+  --fg-faint: rgba(36, 26, 18, 0.55);
+  --rule: rgba(36, 26, 18, 0.22);
+  --rule-soft: rgba(36, 26, 18, 0.11);
+  --accent: #a3281c;
   color: var(--fg);
 }
 
@@ -97,13 +97,33 @@
 
   /* Formica: a speckled counter top, close up */
   .formica {
-    background-color: theme("colors.diner.cream");
+    background-color: theme("colors.diner.oat");
     background-image:
-      radial-gradient(circle at 12% 28%, rgba(23, 22, 18, 0.07) 0.9px, transparent 1.1px),
-      radial-gradient(circle at 68% 12%, rgba(168, 51, 46, 0.09) 0.8px, transparent 1px),
-      radial-gradient(circle at 41% 71%, rgba(53, 102, 95, 0.08) 0.9px, transparent 1.1px),
-      radial-gradient(circle at 86% 63%, rgba(23, 22, 18, 0.05) 0.7px, transparent 0.9px);
+      radial-gradient(circle at 12% 28%, rgba(36, 26, 18, 0.1) 0.9px, transparent 1.1px),
+      radial-gradient(circle at 68% 12%, rgba(191, 59, 44, 0.16) 0.8px, transparent 1px),
+      radial-gradient(circle at 41% 71%, rgba(46, 139, 136, 0.16) 0.9px, transparent 1.1px),
+      radial-gradient(circle at 86% 63%, rgba(201, 143, 33, 0.14) 0.7px, transparent 0.9px);
     background-size: 37px 41px, 53px 47px, 61px 59px, 43px 67px;
+  }
+
+  /* The painted trim that runs round a diner: tomato, mustard, turquoise */
+  .trim {
+    background: linear-gradient(
+      180deg,
+      theme("colors.diner.red-lit") 0 34%,
+      theme("colors.diner.mustard") 0 67%,
+      theme("colors.diner.teal-lit") 0
+    );
+  }
+
+  /* Walnut wainscot under the counter */
+  .wainscot {
+    background-color: theme("colors.diner.walnut");
+    background-image: repeating-linear-gradient(
+      90deg,
+      rgba(0, 0, 0, 0.26) 0 2px,
+      transparent 2px 34px
+    );
   }
 
   /* A run of chrome edging, lit from above */
@@ -124,9 +144,9 @@
     background-image: conic-gradient(
       from 90deg at 50% 50%,
       theme("colors.diner.ink") 25%,
-      theme("colors.diner.bone") 0 50%,
+      theme("colors.diner.butter") 0 50%,
       theme("colors.diner.ink") 0 75%,
-      theme("colors.diner.bone") 0
+      theme("colors.diner.butter") 0
     );
     background-size: 64px 64px;
   }
@@ -183,21 +203,21 @@
   /* In the diner the solid button inverts: dark on the bone counter */
   .room-front .btn {
     --btn-bg: theme("colors.diner.ink");
-    --btn-fg: theme("colors.diner.bone");
-    --btn-wipe: theme("colors.diner.red");
+    --btn-fg: theme("colors.diner.butter");
+    --btn-wipe: theme("colors.diner.red-lit");
   }
   .room-front .btn:hover {
-    color: theme("colors.diner.bone");
+    color: theme("colors.diner.butter");
   }
   .room-front .btn-ghost {
     --btn-bg: transparent;
     --btn-fg: theme("colors.diner.ink");
-    --btn-wipe: theme("colors.diner.red");
+    --btn-wipe: theme("colors.diner.teal");
     border-color: var(--rule);
   }
   .room-front .btn-ghost:hover {
-    border-color: theme("colors.diner.red");
-    color: theme("colors.diner.bone");
+    border-color: theme("colors.diner.teal");
+    color: theme("colors.diner.butter");
   }
 
   .linkline {
