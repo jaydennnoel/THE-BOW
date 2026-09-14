@@ -16,64 +16,39 @@ export default {
     extend: {
       colors: {
         /**
-         * The Bow's wordmark is black and white, and the page is built on
-         * neutrals. The accents are the things in the room that have aged:
-         * tarnished brass on the rail, brick, spilled wine soaked into wood,
-         * a bottle held up to the light, nicotine on the ceiling.
+         * Taken off photographs of the room rather than invented.
          *
-         * All of them are dulled on purpose — nothing here is saturated
-         * enough to read as a highlighter. Where an accent carries text it
-         * clears WCAG AA on the panel it sits on; `oxblood` is deliberately
-         * too dark for that and is only ever used as a fill, edge or wash.
+         * The whole building is dark. Up front it's galvanized sheet, duct
+         * work, a butcher-block counter and black stools under warm bulbs;
+         * out back it's near-black wood panelling, neon, and pool tables
+         * whose cloth is electric blue, not green. Black-and-white tile runs
+         * under both. The wordmark stays black and white.
          */
-        ink: { DEFAULT: "#0a0a09", 2: "#111110", 3: "#181817" },
-        char: { DEFAULT: "#1f1f1d", 2: "#2a2a27" },
+        ink: { DEFAULT: "#0b0b0c", 2: "#121214", 3: "#1a1a1d" },
+        char: { DEFAULT: "#212125", 2: "#2b2b30" },
         cream: {
-          DEFAULT: "#f4f1ea",
-          dim: "rgba(244,241,234,.66)",
-          faint: "rgba(244,241,234,.4)",
+          DEFAULT: "#f0ece2",
+          dim: "rgba(240,236,226,.66)",
+          faint: "rgba(240,236,226,.4)",
         },
-        brass: { DEFAULT: "#b0913f", lit: "#c9ab5c", deep: "#6f5a25" },
-        clay: "#a85f43",
-        bottle: { DEFAULT: "#5c7a52", lit: "#7b9c6e" },
-        tobacco: "#8c7a5c",
-        oxblood: { DEFAULT: "#7a3038", lit: "#9c5a52" },
-        /** The one lit object on the page: the sign hanging in the window. */
-        sign: { red: "#ef3b22", ice: "#cfeaff" },
-        /** The cloth on the table, used by the hero canvas. */
-        felt: { DEFAULT: "#1f7a3f", lit: "#2f9e55", deep: "#12452a" },
-        hair: { DEFAULT: "rgba(244,241,234,.15)", soft: "rgba(244,241,234,.07)" },
+        /** Galvanized sheet and stainless. */
+        steel: { DEFAULT: "#6f7478", lit: "#aab0b4", dark: "#34373a" },
+        /** Butcher block up front, panelling out back. */
+        wood: { DEFAULT: "#8a6034", lit: "#c08b4e", dark: "#43301c" },
+        /** The cloth on the tables. */
+        cyan: { DEFAULT: "#1ba8c6", lit: "#4fd2e8", deep: "#0a4f63" },
+        /** The bulbs over the counter and the lit menu board. */
+        amber: { DEFAULT: "#e0a54a", lit: "#f3c87c", deep: "#7d5417" },
+        /** Piping on the stools, and the sign in the window. */
+        red: { DEFAULT: "#c0392b", lit: "#e05a48" },
+        brick: "#7a3f33",
+        felt: { DEFAULT: "#1ba8c6", lit: "#4fd2e8", deep: "#0a4f63" },
+        hair: { DEFAULT: "rgba(240,236,226,.15)", soft: "rgba(240,236,226,.07)" },
 
         /**
-         * The front room: an old diner. Formica, a bone counter, red vinyl
-         * booths, chrome edging and a strip of tile.
-         */
-        diner: {
-          /**
-           * A southern diner, lit by warm bulbs rather than daylight: oat
-           * walls, a butter panel, tomato and teal trim, mustard, and dark
-           * walnut. The ground is deliberately well off white — the room
-           * should feel warm, not bleached.
-           */
-          oat: "#e3d2ae",
-          butter: "#efe2c4",
-          ink: "#241a12",
-          /** Tomato. The deep one carries small type; the bright one is trim. */
-          red: "#a3281c",
-          "red-lit": "#bf3b2c",
-          /** Turquoise vinyl. Same split. */
-          teal: "#17605c",
-          "teal-lit": "#2e8b88",
-          mustard: "#c98f21",
-          walnut: "#5a3a24",
-          chrome: "#c5c9cb",
-        },
-
-        /**
-         * Room-aware tokens. Anything shared between the two halves of the
-         * page paints with these; a section sets which room it is in and the
-         * primitives inside it follow. Defaults are the back room, so the
-         * dark half needs no markup at all.
+         * Room-aware tokens. Both halves are dark now — they differ by
+         * material and by the colour of the light, not by brightness. Front
+         * of house is lit warm; the back room is lit by the tables.
          */
         room: {
           fg: "var(--fg)",

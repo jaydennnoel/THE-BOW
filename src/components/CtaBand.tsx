@@ -12,10 +12,10 @@ export function CtaBand() {
         style={{
           backgroundImage:
             // courses of brick, going dark toward the edges of the frame
-            "radial-gradient(90% 110% at 50% 40%,rgba(140,122,92,.07),transparent 68%)," +
+            "radial-gradient(90% 110% at 50% 40%,rgba(27,168,198,.08),transparent 68%)," +
             "repeating-linear-gradient(0deg,rgba(0,0,0,.42) 0 2px,transparent 2px 26px)," +
             "repeating-linear-gradient(90deg,rgba(0,0,0,.34) 0 2px,transparent 2px 56px)," +
-            "linear-gradient(180deg,#191614,#0e0d0c 60%,#0a0a09)",
+            "linear-gradient(180deg,#1a1a1d,#0e0e10 60%,#0b0b0c)",
         }}
       />
       <div aria-hidden="true" className="grain pointer-events-none absolute inset-0 -z-10 opacity-60" />

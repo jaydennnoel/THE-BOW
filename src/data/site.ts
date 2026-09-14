@@ -1,14 +1,18 @@
 /**
  * ─────────────────────────────────────────────────────────────
  *  THE BOW — single source of truth for site content.
- *  Everything in square brackets is a PLACEHOLDER awaiting real
- *  business information. Nothing here is invented as fact.
+ *
+ *  The menu below is transcribed from a photograph of the board
+ *  on the wall, prices included. Check it against the board
+ *  before launch — it was read off a picture, and the board
+ *  changes. Everything still in square brackets is a placeholder
+ *  awaiting real information. Nothing here is invented as fact.
  * ─────────────────────────────────────────────────────────────
  */
 
 export const site = {
   name: "The Bow",
-  tagline: "Burgers · Brews · Billiards",
+  tagline: "Burgers | Brews | Billiards",
   /** Replace before launch — used for canonical, OG and schema URLs. */
   domain: "https://REPLACE-WITH-DOMAIN.com",
 
@@ -23,12 +27,19 @@ export const site = {
     mapsUrl: "https://maps.google.com/?q=The+Bow",
   },
 
-  /** From the hours card on the door: Monday–Saturday. Times to confirm. */
+  /**
+   * The door says Monday–Saturday and the board says the grill closes at
+   * nine. The opening time on the door decal isn't legible in the photo —
+   * confirm it before launch.
+   */
   hours: [
-    { days: "Monday – Thursday", time: "[open – close]" },
-    { days: "Friday – Saturday", time: "[open – close]" },
-    { days: "Sunday", time: "[hours]" },
+    { days: "Monday – Saturday", time: "[open] – 9:00" },
+    { days: "Grill closes", time: "9:00" },
+    { days: "Sunday", time: "Closed" },
   ],
+
+  /** Off the board: 5–7pm, can beer 2.25, wine 3.40. */
+  happyHour: { when: "Happy hour · 5 – 7pm", detail: "Can beer $2.25 · Wine $3.40" },
 
   socials: [
     { id: "instagram", label: "Instagram", href: "#" },
@@ -55,7 +66,9 @@ export const about = [
 
 export interface MenuItem {
   name: string;
-  desc: string;
+  /** As printed on the board. */
+  price?: string;
+  desc?: string;
   badge?: string;
 }
 export interface MenuCategory {
@@ -64,80 +77,107 @@ export interface MenuCategory {
   items: MenuItem[];
 }
 
-/** PLACEHOLDER menu — swap in the real board. Prices intentionally blank. */
+/**
+ * Transcribed from the board on the wall. No descriptions here on purpose —
+ * the board doesn't carry any, and inventing them would put words in the
+ * kitchen's mouth.
+ */
 export const menu: MenuCategory[] = [
   {
     id: "burgers",
-    label: "Burgers",
+    label: "Burgers & more",
     items: [
-      { name: "The Bow burger", desc: "Double smash patty, American, pickle, house sauce.", badge: "House" },
-      { name: "Bacon & cheddar", desc: "Thick-cut bacon, sharp cheddar, crispy onion." },
-      { name: "Mushroom swiss", desc: "Sautéed mushrooms, swiss, garlic aioli." },
-      { name: "Jalapeño smash", desc: "Pepper jack, jalapeño, chipotle mayo." },
-      { name: "Patty melt", desc: "Griddled rye, caramelized onion, swiss." },
-      { name: "Black bean burger", desc: "House black bean patty, avocado, lime crema.", badge: "Veg" },
+      { name: "Hamburger", price: "5.23", badge: "House" },
+      { name: "Cheeseburger", price: "5.80" },
+      { name: "Hamburger steak", price: "10.18" },
+      { name: "Chicken fingers", price: "5.23" },
+      { name: "Grilled chicken", price: "5.65" },
+      { name: "Chicken salad sandwich", price: "4.40" },
+      { name: "Wings", price: "9.08" },
+      { name: "Hot dog", price: "2.59" },
+      { name: "Corn dog", price: "2.37" },
+      { name: "Ham sandwich", price: "3.85" },
+      { name: "Baby club", price: "5.78" },
+      { name: "BLT", price: "4.68" },
+      { name: "Egg sandwich", price: "3.58" },
+      { name: "Bacon & egg", price: "4.95" },
+      { name: "Bologna", price: "3.59" },
+      { name: "Bologna & egg", price: "4.24" },
+      { name: "Grilled cheese", price: "3.04" },
+      { name: "Fish & chips", price: "5.50" },
+      { name: "Large salad", price: "8.53" },
     ],
   },
   {
-    id: "starters",
-    label: "Starters",
+    id: "appetizers",
+    label: "Appetizers",
     items: [
-      { name: "Fried pickles", desc: "Hand-battered spears, house ranch." },
-      { name: "Loaded fries", desc: "Cheese, bacon, scallion, sour cream." },
-      { name: "Cheese curds", desc: "White cheddar, marinara on the side." },
-      { name: "Wings", desc: "Six or twelve. Buffalo, dry rub, or gold sauce." },
-      { name: "Onion rings", desc: "Thick cut, beer battered." },
-      { name: "Chips & queso", desc: "Warm queso, pickled jalapeño." },
+      { name: "Fried pickles", price: "4.68" },
+      { name: "Jalapeño poppers", price: "6.60" },
+      { name: "Cheese sticks", price: "5.78" },
+      { name: "Jalapeño corn nuggets", price: "3.58" },
     ],
   },
   {
-    id: "sandwiches",
-    label: "Sandwiches",
+    id: "sides",
+    label: "Sides",
     items: [
-      { name: "Chicken sandwich", desc: "Fried or grilled, slaw, pickles, brioche." },
-      { name: "Philly", desc: "Shaved steak, peppers, onions, provolone." },
-      { name: "Club", desc: "Turkey, bacon, lettuce, tomato, toasted sourdough." },
-      { name: "Grilled cheese & soup", desc: "Three cheeses, cup of tomato." },
+      { name: "French fries", price: "2.04" },
+      { name: "Onion rings", price: "2.64" },
+      { name: "Tater tots", price: "2.27" },
+      { name: "Half & half", price: "3.58", desc: "Fries and onion rings only." },
+      { name: "Chili cheese fries", price: "5.78" },
+      { name: "Chili cheese tots", price: "6.05" },
+      { name: "Small salad", price: "3.58" },
     ],
   },
   {
-    id: "entrees",
-    label: "Entrées",
+    id: "extras",
+    label: "Extras",
     items: [
-      { name: "Ribeye", desc: "Two sides, garlic butter." },
-      { name: "Chicken tenders", desc: "Hand breaded, fries, choice of sauce." },
-      { name: "Fish & chips", desc: "Beer battered cod, slaw, tartar." },
-      { name: "Chopped salad", desc: "Greens, cucumber, tomato, feta, herb vinaigrette.", badge: "Veg" },
+      { name: "Hamburger patty", price: "3.85" },
+      { name: "Chili", price: "1.65" },
+      { name: "Bacon", price: "1.38" },
+      { name: "Egg", price: ".77" },
+      { name: "Gravy", price: ".66" },
+      { name: "Jalapeños", price: ".66" },
+      { name: "Cole slaw", price: ".66" },
+      { name: "Sauces", price: ".66" },
+      { name: "Extra onions", price: ".66" },
+      { name: "Cheese", price: ".55" },
+      { name: "To-go fee", price: ".39" },
     ],
   },
   {
-    id: "shareables",
-    label: "Shareables",
+    id: "drinks",
+    label: "Drinks",
     items: [
-      { name: "The rack", desc: "Wings, tenders, rings, fried pickles. Built for four." },
-      { name: "Nacho pile", desc: "Queso, beef or chicken, all the fixings." },
-      { name: "Soft pretzels", desc: "Beer cheese, whole grain mustard." },
-      { name: "Flatbread", desc: "Ask your server what's on it tonight." },
+      { name: "Cokes", price: "2.20" },
+      { name: "Tea", price: "2.20" },
+      { name: "Monster", price: "3.30" },
+      { name: "Bottled water", price: "1.38" },
+      { name: "Tap water or ice", price: ".39" },
     ],
   },
   {
-    id: "desserts",
-    label: "Desserts",
+    id: "beer",
+    label: "Beer & wine",
     items: [
-      { name: "Skillet cookie", desc: "Warm, vanilla ice cream, two spoons." },
-      { name: "Fried cheesecake", desc: "Berry sauce, powdered sugar." },
-      { name: "Brownie sundae", desc: "Hot fudge, whipped cream." },
-      { name: "Boozy shake", desc: "Ask the bar. 21+." },
+      { name: "12 oz can", price: "2.75" },
+      { name: "12 oz bottle", price: "3.30" },
+      { name: "Wine", price: "4.40" },
+      { name: "Happy hour can beer", price: "2.25", badge: "5 – 7pm" },
+      { name: "Happy hour wine", price: "3.40", badge: "5 – 7pm" },
     ],
   },
 ];
 
 export const drinks = [
-  { n: "01", name: "Cocktails", accent: "#a85f43", body: "House classics and a short list of our own. Shaken, stirred, no theatrics.", glass: "cocktail" },
-  { n: "02", name: "Beer", accent: "#b0913f", body: "Draft, bottles and cans. Domestic staples plus whatever's local right now.", glass: "beer" },
-  { n: "03", name: "Wine", accent: "#9c5a52", body: "Reds, whites and bubbles by the glass or the bottle.", glass: "wine" },
-  { n: "04", name: "Spirits", accent: "#8c7a5c", body: "Whiskey, tequila, gin, rum and vodka. Neat, rocks, or built into something.", glass: "spirit" },
-  { n: "05", name: "Zero proof", accent: "#5c7a52", body: "Mocktails, sodas and coffee for whoever's driving everyone home.", glass: "soda" },
+  { n: "01", name: "Cocktails", accent: "#c0392b", body: "House classics and a short list of our own. Shaken, stirred, no theatrics.", glass: "cocktail" },
+  { n: "02", name: "Beer", accent: "#e0a54a", body: "Draft, bottles and cans. Domestic staples plus whatever's local right now.", glass: "beer" },
+  { n: "03", name: "Wine", accent: "#e05a48", body: "Reds, whites and bubbles by the glass or the bottle.", glass: "wine" },
+  { n: "04", name: "Spirits", accent: "#c08b4e", body: "Whiskey, tequila, gin, rum and vodka. Neat, rocks, or built into something.", glass: "spirit" },
+  { n: "05", name: "Zero proof", accent: "#1ba8c6", body: "Mocktails, sodas and coffee for whoever's driving everyone home.", glass: "soda" },
 ] as const;
 
 /** The hall runs on walk-ins. Nothing here is held, booked or reserved. */
@@ -152,11 +192,11 @@ export const pool = [
 
 /** PLACEHOLDER schedule — replace with the real calendar. */
 export const events = [
-  { when: "Tuesdays", cadence: "Weekly", name: "8-ball tournament", desc: "Sign-up sheet at the bar, bracket play, winner takes the pot.", cta: "How it works", href: "#pool", accent: "#b0913f" },
-  { when: "Wednesdays", cadence: "Weekly", name: "Trivia night", desc: "Teams of six or fewer. Prizes for the top three. Come early for a seat.", cta: "See the menu", href: "#menu", accent: "#a85f43" },
-  { when: "Thursdays", cadence: "Weekly", name: "League night", desc: "The hall is busy and loud. Open tables at the back all night.", cta: "Join a team", href: "#contact", accent: "#7a3038" },
-  { when: "Fridays", cadence: "Weekly", name: "Live music", desc: "Local acts on the floor. Kitchen runs late, bar runs later.", cta: "What's pouring", href: "#drinks", accent: "#8c7a5c" },
-  { when: "Game day", cadence: "Seasonal", name: "Watch party", desc: "Every screen on, sound up for the big one, food and drink specials.", cta: "Find us", href: "#contact", accent: "#5c7a52" },
+  { when: "Tuesdays", cadence: "Weekly", name: "8-ball tournament", desc: "Sign-up sheet at the bar, bracket play, winner takes the pot.", cta: "How it works", href: "#pool", accent: "#e0a54a" },
+  { when: "Wednesdays", cadence: "Weekly", name: "Trivia night", desc: "Teams of six or fewer. Prizes for the top three. Come early for a seat.", cta: "See the menu", href: "#menu", accent: "#c0392b" },
+  { when: "Thursdays", cadence: "Weekly", name: "League night", desc: "The hall is busy and loud. Open tables at the back all night.", cta: "Join a team", href: "#contact", accent: "#7a3f33" },
+  { when: "Fridays", cadence: "Weekly", name: "Live music", desc: "Local acts on the floor. Kitchen runs late, bar runs later.", cta: "What's pouring", href: "#drinks", accent: "#c08b4e" },
+  { when: "Game day", cadence: "Seasonal", name: "Watch party", desc: "Every screen on, sound up for the big one, food and drink specials.", cta: "Find us", href: "#contact", accent: "#1ba8c6" },
 ] as const;
 
 export const gallery = [

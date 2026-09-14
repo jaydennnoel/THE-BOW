@@ -5,9 +5,9 @@ import { Reveal } from "./ui/Reveal";
 
 /** The whole booking flow, replaced: three steps and none of them is a form. */
 const STEPS = [
-  { n: "1", label: "Walk in", body: "No booking, no deposit, no confirmation email.", accent: "#b0913f" },
-  { n: "2", label: "Name on the board", body: "Chalk it up by the rack. We call it when a table clears.", accent: "#a85f43" },
-  { n: "3", label: "Rack 'em", body: "Play as long as you're winning. Put a song on while you wait.", accent: "#5c7a52" },
+  { n: "1", label: "Walk in", body: "No booking, no deposit, no confirmation email.", accent: "#e0a54a" },
+  { n: "2", label: "Name on the board", body: "Chalk it up by the rack. We call it when a table clears.", accent: "#c0392b" },
+  { n: "3", label: "Rack 'em", body: "Play as long as you're winning. Put a song on while you wait.", accent: "#1ba8c6" },
 ];
 
 export function Pool() {
@@ -17,8 +17,8 @@ export function Pool() {
       className="relative isolate overflow-hidden border-y border-hair-soft py-section"
       style={{
         background:
-          "radial-gradient(75% 60% at 12% 15%,rgba(122,48,56,.1),transparent 62%)," +
-          "radial-gradient(60% 55% at 88% 80%,rgba(140,122,92,.07),transparent 65%),#0a0a09",
+          "radial-gradient(75% 60% at 12% 15%,rgba(192,57,43,.12),transparent 62%)," +
+          "radial-gradient(60% 55% at 88% 80%,rgba(27,168,198,.08),transparent 65%),#0b0b0c",
       }}
     >
       <div aria-hidden="true" className="checker pointer-events-none absolute inset-0 opacity-40" />
@@ -43,7 +43,7 @@ export function Pool() {
                 key={row.n}
                 className="group grid grid-cols-[2.5rem_1fr] items-baseline gap-4 border-b border-hair py-4 transition-[padding] duration-300 ease-cue hover:pl-2"
               >
-                <span className="font-mono text-[.66rem] leading-none tracking-[.1em] text-brass">
+                <span className="font-mono text-[.66rem] leading-none tracking-[.1em] text-cyan">
                   {row.n}
                 </span>
                 <span>
@@ -104,7 +104,7 @@ export function Pool() {
               style={{
                 background:
                   "linear-gradient(180deg,rgba(10,10,9,0) 40%,rgba(10,10,9,.88) 100%)," +
-                  "radial-gradient(70% 60% at 50% 0%,rgba(176,145,63,.18),transparent 70%)",
+                  "radial-gradient(70% 60% at 50% 0%,rgba(27,168,198,.18),transparent 70%)",
               }}
             />
             <figcaption className="absolute inset-x-0 bottom-0 flex flex-wrap items-center justify-between gap-3 px-[clamp(1rem,2vw,1.5rem)] pb-[clamp(1rem,2vw,1.4rem)] font-mono text-[.66rem] uppercase leading-none tracking-[.18em]">

@@ -1,9 +1,9 @@
 /** The lettering painted on the front window, scrolling past as you arrive. */
 const WORDS = [
-  { text: "Burgers", tone: "text-diner-red" },
-  { text: "Brews", tone: "text-diner-ink" },
-  { text: "Billiards", tone: "text-diner-teal" },
-  { text: "Open late", tone: "text-diner-ink" },
+  { text: "Burgers", tone: "text-amber" },
+  { text: "Brews", tone: "text-cream" },
+  { text: "Billiards", tone: "text-cyan" },
+  { text: "Walk in", tone: "text-red-lit" },
 ];
 
 export function Rail() {
@@ -15,7 +15,7 @@ export function Rail() {
       <div aria-hidden="true" className="chrome h-[3px] w-full opacity-80" />
       <div aria-hidden="true" className="trim h-[9px] w-full" />
 
-      <div className="formica relative py-[1.15rem]">
+      <div className="steel-wall relative py-[1.15rem]">
         <div aria-hidden="true" className="marquee">
           {run.map((w, i) => (
             <span
@@ -36,14 +36,14 @@ export function Rail() {
           className="pointer-events-none absolute inset-0"
           style={{
             background:
-              "linear-gradient(90deg,#e3d2ae 0%,transparent 12%,transparent 88%,#e3d2ae 100%)",
+              "linear-gradient(90deg,#131416 0%,transparent 12%,transparent 88%,#131416 100%)",
           }}
         />
       </div>
 
       <div aria-hidden="true" className="trim h-[9px] w-full" />
       <div aria-hidden="true" className="chrome h-[3px] w-full opacity-80" />
-      <span className="sr-only">Burgers, brews, billiards — open late.</span>
+      <span className="sr-only">Burgers, brews, billiards — walk in.</span>
     </div>
   );
 }

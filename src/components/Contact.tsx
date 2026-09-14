@@ -23,8 +23,8 @@ export function Contact() {
       className="relative isolate overflow-hidden py-section"
       style={{
         background:
-          "radial-gradient(60% 50% at 85% 12%,rgba(122,48,56,.1),transparent 65%)," +
-          "radial-gradient(55% 45% at 10% 90%,rgba(122,48,56,.1),transparent 65%),#0a0a09",
+          "radial-gradient(60% 50% at 85% 12%,rgba(192,57,43,.12),transparent 65%)," +
+          "radial-gradient(55% 45% at 10% 90%,rgba(192,57,43,.12),transparent 65%),#0b0b0c",
       }}
     >
       <div className="shell relative">
@@ -53,7 +53,7 @@ export function Contact() {
                   href={site.contact.mapsUrl}
                   target="_blank"
                   rel="noopener"
-                  className="transition-colors hover:text-brass-lit"
+                  className="transition-colors hover:text-cyan-lit"
                 >
                   {site.contact.address1}
                   <br />
@@ -61,12 +61,12 @@ export function Contact() {
                 </a>
               </Row>
               <Row label="Phone">
-                <a href={site.contact.phoneHref} className="transition-colors hover:text-brass-lit">
+                <a href={site.contact.phoneHref} className="transition-colors hover:text-cyan-lit">
                   {site.contact.phoneLabel}
                 </a>
               </Row>
               <Row label="Email">
-                <a href={site.contact.emailHref} className="transition-colors hover:text-brass-lit">
+                <a href={site.contact.emailHref} className="transition-colors hover:text-cyan-lit">
                   {site.contact.emailLabel}
                 </a>
               </Row>

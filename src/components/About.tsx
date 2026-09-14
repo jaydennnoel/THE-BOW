@@ -5,30 +5,31 @@ import { SectionHead } from "./ui/SectionHead";
 
 export function About() {
   return (
-    <section id="about" className="room-front formica relative isolate overflow-hidden pb-[clamp(5rem,9vw,9rem)] pt-section">
+    <section id="about" className="room-front steel-wall relative isolate overflow-hidden pb-[clamp(5rem,9vw,9rem)] pt-section">
       {/* the counter lights, pooling down the wall */}
       <div
         aria-hidden="true"
         className="pointer-events-none absolute inset-0"
         style={{
           background:
-            "radial-gradient(70% 38% at 50% -4%,rgba(255,238,196,.5),transparent 64%)," +
-            "radial-gradient(46% 38% at 88% 78%,rgba(163,40,28,.1),transparent 68%)," +
-            "radial-gradient(40% 34% at 6% 88%,rgba(23,96,92,.1),transparent 70%)",
+            "radial-gradient(52% 32% at 22% -4%,rgba(224,165,74,.3),transparent 66%)," +
+            "radial-gradient(48% 30% at 72% -2%,rgba(224,165,74,.22),transparent 66%)," +
+            "radial-gradient(44% 36% at 92% 84%,rgba(192,57,43,.12),transparent 70%)," +
+            "linear-gradient(180deg,rgba(11,11,12,.32),rgba(11,11,12,.74))",
         }}
       />
       <div aria-hidden="true" className="trim absolute inset-x-0 top-0 h-[9px]" />
       {/* the floor, showing under the booths */}
       <div aria-hidden="true" className="tile absolute inset-x-0 bottom-0 h-[clamp(1.5rem,3vw,2.5rem)] opacity-90" />
-      <div aria-hidden="true" className="wainscot absolute inset-x-0 bottom-[clamp(1.5rem,3vw,2.5rem)] h-[clamp(.6rem,1.2vw,1rem)]" />
+      <div aria-hidden="true" className="butcher absolute inset-x-0 bottom-[clamp(1.5rem,3vw,2.5rem)] h-[clamp(.6rem,1.2vw,1rem)]" />
       <div className="shell relative">
         <SectionHead
           eyebrow="The place"
           title={
             <>
-              <span className="text-diner-red">A diner up front.</span>
+              <span className="text-amber">A diner up front.</span>
               <br />
-              <span className="text-diner-teal">A bar out back.</span>
+              <span className="text-cyan">A bar out back.</span>
             </>
           }
           aside={
@@ -41,7 +42,7 @@ export function About() {
 
         <div className="grid gap-[clamp(2rem,4vw,3.5rem)] lg:grid-cols-[1.05fr_.95fr] lg:items-center">
           <Reveal className="relative">
-            <div className="group relative overflow-hidden rounded-edge bg-diner-ink/10 shadow-lift">
+            <div className="group relative overflow-hidden rounded-edge bg-char shadow-lift">
               <img
                 src="/images/window.webp"
                 alt="The Bow's window lettering reading burgers, brews, billiards, with the street outside."
@@ -49,10 +50,10 @@ export function About() {
                 height={1108}
                 loading="lazy"
                 decoding="async"
-                className="aspect-[4/5] h-auto w-full object-cover sepia-[.45] saturate-[.8] contrast-[1.05] transition-[transform,filter] duration-[1200ms] ease-cue group-hover:scale-[1.035] group-hover:sepia-0 group-hover:saturate-100"
+                className="aspect-[4/5] h-auto w-full object-cover brightness-[.92] contrast-[1.06] saturate-[.95] transition-[transform,filter] duration-[1200ms] ease-cue group-hover:scale-[1.035] group-hover:brightness-105 group-hover:saturate-110"
               />
             </div>
-            <div className="relative mt-2 w-full overflow-hidden rounded-edge border-0 sm:absolute sm:-bottom-[8%] sm:-right-[6%] sm:mt-0 sm:w-[min(46%,260px)] sm:border-[6px] sm:border-diner-teal-lit sm:shadow-[0_24px_60px_-20px_rgba(0,0,0,.9)]">
+            <div className="relative mt-2 w-full overflow-hidden rounded-edge border-0 sm:absolute sm:-bottom-[8%] sm:-right-[6%] sm:mt-0 sm:w-[min(46%,260px)] sm:border-[6px] sm:border-steel-dark sm:shadow-[0_24px_60px_-20px_rgba(0,0,0,.9)]">
               <img
                 src="/images/sign.webp"
                 alt="The Bow's exterior sign mounted on white brick above the entrance."
@@ -60,7 +61,7 @@ export function About() {
                 height={542}
                 loading="lazy"
                 decoding="async"
-                className="aspect-video h-auto w-full object-cover sepia-[.45] saturate-[.8] contrast-[1.05] sm:aspect-square"
+                className="aspect-video h-auto w-full object-cover brightness-[.92] contrast-[1.06] saturate-[.95] sm:aspect-square"
               />
             </div>
           </Reveal>
@@ -81,7 +82,7 @@ export function About() {
                 <li key={row.n} className="grid grid-cols-[auto_1fr] items-baseline gap-5 border-b border-room-rule py-[1.15rem]">
                   <b
                     className={`font-mono text-[.68rem] font-normal leading-none tracking-[.14em] ${
-                      ["text-diner-red", "text-diner-teal", "text-diner-red"][i % 3]
+                      ["text-amber", "text-red-lit", "text-cyan"][i % 3]
                     }`}
                   >
                     {row.n}

@@ -132,7 +132,7 @@ export function drawRoom(ctx: CanvasRenderingContext2D, cam: Cam, w: number, h: 
 
   /* a single warm lamp somewhere back there */
   const lamp = ctx.createRadialGradient(w * 0.62, hz * 0.1, 0, w * 0.62, hz * 0.5, w * 0.35);
-  lamp.addColorStop(0, "rgba(224,165,74,.22)");
+  lamp.addColorStop(0, "rgba(224,165,74,.24)");
   lamp.addColorStop(1, "rgba(224,165,74,0)");
   ctx.fillStyle = lamp;
   ctx.fillRect(0, 0, w, hz * 1.4);
@@ -140,20 +140,21 @@ export function drawRoom(ctx: CanvasRenderingContext2D, cam: Cam, w: number, h: 
   /* the far cushion: rubber under cloth, catching the light along its top */
   const railH = Math.max(6, h * 0.028);
   const rail = ctx.createLinearGradient(0, hz - railH, 0, hz + railH * 0.3);
-  rail.addColorStop(0, "#0e2c17");
-  rail.addColorStop(0.42, "#174d26");
-  rail.addColorStop(1, "#0a2712");
+  rail.addColorStop(0, "#0a2c36");
+  rail.addColorStop(0.42, "#11505f");
+  rail.addColorStop(1, "#07242c");
   ctx.fillStyle = rail;
   ctx.fillRect(0, hz - railH, w, railH * 1.3);
-  ctx.fillStyle = "rgba(190,225,200,.1)";
+  ctx.fillStyle = "rgba(198,232,242,.12)";
   ctx.fillRect(0, hz - railH, w, Math.max(1, railH * 0.09));
 
   /* the bed */
   const bed = ctx.createLinearGradient(0, hz, 0, h);
-  bed.addColorStop(0, "#15532c");
-  bed.addColorStop(0.15, "#1e7a3c");
-  bed.addColorStop(0.5, "#279247");
-  bed.addColorStop(1, "#17602f");
+  // the cloth at The Bow is electric blue, not the usual green
+  bed.addColorStop(0, "#0c5568");
+  bed.addColorStop(0.15, "#1487a3");
+  bed.addColorStop(0.5, "#1ea9c7");
+  bed.addColorStop(1, "#0e6b82");
   ctx.fillStyle = bed;
   ctx.fillRect(0, hz, w, h - hz);
 
@@ -166,8 +167,8 @@ export function drawRoom(ctx: CanvasRenderingContext2D, cam: Cam, w: number, h: 
     hz + (h - hz) * 0.34,
     Math.max(w, h) * 0.72,
   );
-  pool.addColorStop(0, "rgba(186,240,160,.22)");
-  pool.addColorStop(0.42, "rgba(90,200,110,.08)");
+  pool.addColorStop(0, "rgba(196,246,255,.26)");
+  pool.addColorStop(0.42, "rgba(96,206,232,.09)");
   pool.addColorStop(1, "rgba(0,0,0,0)");
   ctx.fillStyle = pool;
   ctx.fillRect(0, hz, w, h - hz);
@@ -212,7 +213,7 @@ export function drawShadow(ctx: CanvasRenderingContext2D, cam: Cam, b: Ball): vo
   if (rr < 0.6) return;
   ctx.save();
   ctx.globalAlpha = 0.3;
-  ctx.fillStyle = "#07200f";
+  ctx.fillStyle = "#062430";
   ctx.beginPath();
   ctx.ellipse(p.sx + rr * 0.06, p.sy + rr * 0.04, rr * 0.94, rr * 0.24, 0, 0, Math.PI * 2);
   ctx.fill();
@@ -289,8 +290,8 @@ function body(
 
     // light bounced back up off the cloth, under the equator
     const bounce = ctx.createRadialGradient(x, y + r * 0.8, r * 0.04, x, y + r * 0.55, r * 0.95);
-    bounce.addColorStop(0, "rgba(120,215,130,.26)");
-    bounce.addColorStop(1, "rgba(120,215,130,0)");
+    bounce.addColorStop(0, "rgba(110,208,235,.26)");
+    bounce.addColorStop(1, "rgba(110,208,235,0)");
     ctx.fillStyle = bounce;
     ctx.fillRect(x - r, y - r, r * 2, r * 2);
 
@@ -315,7 +316,7 @@ function body(
   if (hz > 0.01) {
     ctx.save();
     ctx.globalAlpha = hz;
-    ctx.fillStyle = "#1f7a4c";
+    ctx.fillStyle = "#18809b";
     ctx.beginPath();
     ctx.arc(x, y, r, 0, Math.PI * 2);
     ctx.fill();
@@ -374,7 +375,7 @@ export function drawImpact(ctx: CanvasRenderingContext2D, cam: Cam, ball: { x: n
   ctx.globalAlpha = (1 - k) * 0.6;
   const g = ctx.createRadialGradient(p.sx, p.sy, 0, p.sx, p.sy, r);
   g.addColorStop(0, "rgba(255,252,242,.9)");
-  g.addColorStop(0.4, "rgba(220,235,215,.28)");
+  g.addColorStop(0.4, "rgba(210,240,250,.28)");
   g.addColorStop(1, "rgba(255,255,255,0)");
   ctx.fillStyle = g;
   ctx.beginPath();

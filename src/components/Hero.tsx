@@ -352,7 +352,7 @@ export function Hero() {
         style={{
           background:
             "linear-gradient(180deg,rgba(10,10,9,.5) 0%,transparent 18%,transparent 46%," +
-            "rgba(10,10,9,.78) 72%,#0a0a09 92%)",
+            "rgba(10,10,9,.78) 72%,#0b0b0c 92%)",
         }}
       />
 

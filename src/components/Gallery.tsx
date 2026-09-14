@@ -10,7 +10,7 @@ export function Gallery() {
       className="relative isolate overflow-hidden py-section"
       style={{
         background:
-          "radial-gradient(50% 45% at 50% 0%,rgba(140,122,92,.07),transparent 65%),#0a0a09",
+          "radial-gradient(50% 45% at 50% 0%,rgba(27,168,198,.08),transparent 65%),#0b0b0c",
       }}
     >
       <div className="shell relative">

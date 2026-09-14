@@ -13,7 +13,7 @@ export function Doorway() {
     <section
       aria-labelledby="doorway-heading"
       className="relative isolate overflow-hidden"
-      style={{ background: "linear-gradient(180deg,#e3d2ae 0%,#c9b48c 22%,#5a3a24 52%,#1b1410 78%,#0a0a09 100%)" }}
+      style={{ background: "linear-gradient(180deg,#1b1d1f 0%,#17181a 26%,#101112 58%,#0b0b0c 100%)" }}
     >
       {/* still in the diner here, so the type is dark on the light end */}
       <div className="room-front shell relative z-[2] grid justify-items-center gap-5 pb-[clamp(2rem,5vw,3.5rem)] pt-[clamp(4rem,9vw,7rem)] text-center">
@@ -25,7 +25,7 @@ export function Doorway() {
         </Reveal>
         <Reveal delay={1}>
           <h2 id="doorway-heading" className="display max-w-[15ch] text-h2 text-room-fg">
-            Out back it&rsquo;s a <span className="text-diner-red">different bar.</span>
+            Out back it&rsquo;s a <span className="text-cyan">different bar.</span>
           </h2>
         </Reveal>
         <Reveal delay={2}>
@@ -51,7 +51,7 @@ export function Doorway() {
             the horizon lets the floor come up out of the gloom instead.
           */}
           <div
-            className="tile absolute inset-x-[-70%] bottom-[-55%] top-0 opacity-[.19]"
+            className="tile absolute inset-x-[-70%] bottom-[-55%] top-0 opacity-[.3]"
             style={{
               transform: "rotateX(76deg)",
               transformOrigin: "50% 0%",
@@ -64,8 +64,8 @@ export function Doorway() {
             className="absolute inset-0"
             style={{
               background:
-                "linear-gradient(180deg,transparent 0%,rgba(10,10,9,.18) 46%," +
-                "rgba(10,10,9,.7) 86%,#0a0a09 100%)",
+                "linear-gradient(180deg,transparent 0%,rgba(11,11,12,.18) 46%," +
+                "rgba(11,11,12,.7) 86%,#0b0b0c 100%)",
             }}
           />
         </div>
@@ -86,8 +86,9 @@ export function Doorway() {
             className="absolute inset-x-[10%] bottom-0 top-[26%] rounded-t-[46%]"
             style={{
               background:
-                "radial-gradient(64% 54% at 50% 82%,rgba(47,158,85,.42),transparent 72%)," +
-                "radial-gradient(46% 34% at 50% 99%,rgba(239,59,34,.2),transparent 70%)",
+                // the tables are lit blue, and that's what you see first
+                "radial-gradient(64% 54% at 50% 82%,rgba(27,168,198,.5),transparent 72%)," +
+                "radial-gradient(46% 34% at 50% 99%,rgba(192,57,43,.2),transparent 70%)",
               filter: "blur(16px)",
             }}
           />

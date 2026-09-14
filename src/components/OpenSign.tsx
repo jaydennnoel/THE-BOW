@@ -84,7 +84,7 @@ export function OpenSign({ className = "" }: { className?: string }) {
       <div
         className="relative rounded-[6px] border border-hair-soft px-[clamp(1.1rem,3vw,2rem)] py-[clamp(1.1rem,2.6vw,1.8rem)] shadow-lift"
         style={{
-          background: "linear-gradient(180deg,#111110,#070706 55%,#0a0a09)",
+          background: "linear-gradient(180deg,#121214,#070706 55%,#0b0b0c)",
           ["--tube" as string]: red,
         }}
       >
