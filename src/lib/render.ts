@@ -243,9 +243,14 @@ function paintRoom(ctx: CanvasRenderingContext2D, cam: Cam, w: number, h: number
 
 /* ── balls ────────────────────────────────────────────────────────────── */
 
+const order: Ball[] = [];
+
 /** Far to near, so the near ones overlap the far ones. */
 export function inDepthOrder(balls: Ball[]): Ball[] {
-  return balls.filter((b) => !b.gone).sort((a, b) => b.z - a.z);
+  order.length = 0;
+  for (const b of balls) if (!b.gone) order.push(b);
+  order.sort((a, b) => b.z - a.z);
+  return order;
 }
 
 /** Air between the lens and a ball further off than the focus plane. */
@@ -395,10 +400,18 @@ function unit(hex: string): [number, number, number] {
   return c;
 }
 
-/** Every character printed on the table, for the glyph atlas. */
+/**
+ * Every character that will be printed on the table at any point, for the
+ * glyph atlas — the numbers the set is racked with as well as the letters
+ * the six turn over to.
+ */
 export function facesUsed(list: Ball[]): string[] {
   const seen: string[] = [];
-  for (const b of list) if (b.face && !seen.includes(b.face)) seen.push(b.face);
+  const add = (ch?: string) => {
+    if (ch && !seen.includes(ch)) seen.push(ch);
+  };
+  for (const b of list) add(b.face);
+  for (const b of list) add(b.letterFace);
   return seen;
 }
 
@@ -411,6 +424,39 @@ const mat = new Map<string, Float32Array>();
  * shader will actually rasterise at — passing CSS pixels is what left the
  * balls rendering at half the display's resolution before.
  */
+/*
+ * The draw lists are rebuilt sixty times a second, so they are pooled
+ * rather than reallocated: a fresh array plus a hundred-odd object literals
+ * every frame is exactly the sort of garbage that shows up as an
+ * intermittent hitch partway through the break.
+ */
+const shadowPool: ShadowDraw[] = [];
+const ballPool: BallDraw[] = [];
+const shadowList: ShadowDraw[] = [];
+const ballList: BallDraw[] = [];
+
+function takeShadow(n: number): ShadowDraw {
+  while (shadowPool.length <= n) shadowPool.push({ x: 0, y: 0, r: 0, alpha: 1 });
+  return shadowPool[n];
+}
+
+function takeBall(n: number): BallDraw {
+  while (ballPool.length <= n) {
+    ballPool.push({
+      x: 0,
+      y: 0,
+      r: 0,
+      m: new Float32Array(9),
+      colour: [0, 0, 0],
+      striped: false,
+      cue: false,
+      glyph: -1,
+      alpha: 1,
+    });
+  }
+  return ballPool[n];
+}
+
 export function buildFrame(
   cam: Cam,
   list: Ball[],
@@ -419,8 +465,12 @@ export function buildFrame(
   /** 0-1. Thins the motion blur when the machine can't keep up. */
   quality = 1,
 ): { shadows: ShadowDraw[]; balls: BallDraw[] } {
-  const shadows: ShadowDraw[] = [];
-  const balls: BallDraw[] = [];
+  const shadows = shadowList;
+  const balls = ballList;
+  shadows.length = 0;
+  balls.length = 0;
+  let sn = 0;
+  let bn = 0;
 
   for (const b of inDepthOrder(list)) {
     const p = project(cam, b.x, b.z, R);
@@ -428,7 +478,12 @@ export function buildFrame(
     if (r < 0.6) continue;
 
     const foot = project(cam, b.x, b.z, 0);
-    shadows.push({ x: foot.sx * dpr, y: foot.sy * dpr, r: foot.k * R * dpr, alpha: 1 });
+    const sh = takeShadow(sn++);
+    sh.x = foot.sx * dpr;
+    sh.y = foot.sy * dpr;
+    sh.r = foot.k * R * dpr;
+    sh.alpha = 1;
+    shadows.push(sh);
 
     // row-major object->room becomes column-major for the uniform
     let m = mat.get(b.id);
@@ -446,13 +501,20 @@ export function buildFrame(
     m[7] = b.m[5];
     m[8] = b.m[8];
 
-    const common = {
-      r,
-      m,
-      colour: unit(b.color),
-      striped: b.striped,
-      cue: b.cue,
-      glyph: b.cue || !b.face ? -1 : glyphIndex(b.face),
+    const colour = unit(b.color);
+    const glyph = b.cue || !b.face ? -1 : glyphIndex(b.face);
+    const put = (x: number, y: number, alpha: number) => {
+      const d = takeBall(bn++);
+      d.x = x;
+      d.y = y;
+      d.r = r;
+      d.m = m as Float32Array;
+      d.colour = colour;
+      d.striped = b.striped;
+      d.cue = b.cue;
+      d.glyph = glyph;
+      d.alpha = alpha;
+      balls.push(d);
     };
 
     // The smear runs along the path the ball actually covered this frame,
@@ -470,16 +532,11 @@ export function buildFrame(
       const weight = Math.min(1, travel / (r * 1.5)) * 0.5;
       for (let i = steps; i >= 1; i--) {
         const k = i / (steps + 1);
-        balls.push({
-          ...common,
-          x: p.sx * dpr - dx * k,
-          y: p.sy * dpr - dy * k,
-          alpha: (weight / steps) * (1.9 - k),
-        });
+        put(p.sx * dpr - dx * k, p.sy * dpr - dy * k, (weight / steps) * (1.9 - k));
       }
     }
 
-    balls.push({ ...common, x: p.sx * dpr, y: p.sy * dpr, alpha: 1 });
+    put(p.sx * dpr, p.sy * dpr, 1);
   }
 
   return { shadows, balls };

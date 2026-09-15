@@ -35,8 +35,13 @@ import { Eyebrow } from "./ui/Eyebrow";
 
 /** The cue is struck a hair off centre, so the rack opens instead of stacking. */
 const AIM = -0.026;
-/** Hard stop: if the physics somehow stalls, the name lands anyway. */
-const TIMEOUT = T_ASSEMBLE + 2.8;
+/**
+ * Hard stop: if the physics somehow stalls, the name lands anyway. It has to
+ * sit well clear of when the sequence actually finishes, or it stops being a
+ * safety net and starts being the thing that ends the shot — which snaps the
+ * last balls out of frame instead of letting them roll out.
+ */
+const TIMEOUT = T_ASSEMBLE + 4.4;
 
 /**
  * The break — shot the way you'd shoot it: the camera down on the cloth,

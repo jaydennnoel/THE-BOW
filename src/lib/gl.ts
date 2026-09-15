@@ -247,8 +247,8 @@ function link(gl: WebGLRenderingContext, vs: string, fs: string): WebGLProgram |
   return p;
 }
 
-const ATLAS_COLS = 4;
-const ATLAS_CELL = 128; // 4 x 128 = 512, a power of two
+const ATLAS_COLS = 8;
+const ATLAS_CELL = 128; // 8 x 128 = 1024, a power of two
 
 /** The printed characters, all on one texture. */
 function atlasCanvas(chars: string[]): HTMLCanvasElement {
@@ -400,14 +400,21 @@ export function createRenderer(canvas: HTMLCanvasElement): Renderer | null {
       }
 
       // the ghosts first, so the ball itself lands on top of its own smear
-      const ghosts = balls.filter((b) => b.alpha < 1);
-      if (ghosts.length) {
+      let ghosts = false;
+      for (let i = 0; i < balls.length; i++) {
+        if (balls[i].alpha < 1) {
+          ghosts = true;
+          break;
+        }
+      }
+      if (ghosts) {
         gl.useProgram(ghostProg);
         gl.enableVertexAttribArray(gu.corner);
         gl.vertexAttribPointer(gu.corner, 2, gl.FLOAT, false, 0, 0);
         gl.uniform2f(gu.viewport, viewport.w, viewport.h);
         gl.uniform1f(gu.pitch, pitch);
-        for (const b of ghosts) {
+        for (const b of balls) {
+          if (b.alpha >= 1) continue;
           gl.uniform2f(gu.center, b.x, b.y);
           gl.uniform2f(gu.radius, b.r, b.r);
           gl.uniform1f(gu.rpx, b.r);

@@ -29,11 +29,15 @@ export const R = 5.6;
  */
 export const BED = {
   /** Cushion the camera can see, in front of the dark room beyond it. */
-  far: 138,
+  far: 112,
   /** Past here a ball has left the shot for good. */
   near: -34,
-  /** Half-width of the simulated bed; well outside the frame. */
-  half: 150,
+  /**
+   * Half-width of the simulated bed. Well outside the frame, but no wider
+   * than it needs to be — the nine have to clear it before the sequence
+   * ends, and every extra unit is distance they have to cover.
+   */
+  half: 96,
 };
 
 /* ── balls ────────────────────────────────────────────────────────────── */
@@ -41,6 +45,10 @@ export const BED = {
 export interface Ball {
   /** Stable across the whole sequence, so the sprite cache can key on it. */
   id: string;
+  /** Staggers when this ball starts making for the edge of frame. */
+  clearDelay: number;
+  /** Which way out it committed to, latched so it can't dither near centre. */
+  clearDir: number;
   x: number;
   z: number;
   vx: number;
@@ -50,8 +58,14 @@ export interface Ball {
   cue: boolean;
   /** Set on the six that spell the name — the marker for "this one stays". */
   letter?: string;
-  /** What's printed on the ball. */
+  /** What's printed on the ball right now. */
   face: string;
+  /**
+   * What the six that stay turn over to once the cue arrives. Racked, they
+   * wear their numbers like any other set; the name only appears out of the
+   * break, while every ball is tumbling too fast for the change to be seen.
+   */
+  letterFace?: string;
   /**
    * How the ball is turned: a row-major 3×3 mapping the ball's own frame
    * into the room. Rolling turns it; there is no separate "roll angle",
@@ -117,8 +131,20 @@ function turned(m: Float64Array): number {
   return d;
 }
 
-/** A ball racked at some arbitrary angle, as they always are. */
+/**
+ * A ball racked at some arbitrary angle, as they always are — except the
+ * apex, which is turned so its number faces the lens. It is the ball the
+ * shot opens on, and it is what says "an ordinary set" before the break
+ * turns the six over to letters.
+ */
 function tumbled(seed: number): Float64Array {
+  if (seed === 0) {
+    const m = restMatrix(CAM_PITCH);
+    // not quite square to the camera, or it reads as a decal
+    spin(m, 0, 0, 1, 0.16);
+    spin(m, 1, 0, 0, -0.1);
+    return m;
+  }
   const m = identity();
   spin(m, 0, 1, 0, seed * 1.31);
   spin(m, 1, 0, 0, seed * 0.77 + 0.4);
@@ -126,7 +152,14 @@ function tumbled(seed: number): Float64Array {
   return m;
 }
 
-export const CLOTH_DECEL = 96;    // units/s², cloth drag on a rolling ball
+/*
+ * Cloth drag, units/s². This was steep enough to take the whole break's
+ * energy inside a second, which left the tail of the sequence having to
+ * re-accelerate balls that had all but stopped. A real break rolls on for
+ * several seconds; letting it decay at something closer to that rate is
+ * what makes the shot read as one continuous motion.
+ */
+export const CLOTH_DECEL = 30;
 export const BREAK_SPEED = 560;   // a hard, flat break
 const CUSHION = 0.7;              // rebound off the far rubber
 const BALL_REST = 0.955;          // ball on ball is very nearly elastic
@@ -136,10 +169,18 @@ const BALL_REST = 0.955;          // ball on ball is very nearly elastic
  * the cue is released, and it reaches the apex a sixth of a second later —
  * the geometry is fixed, so the flash can be timed rather than detected.
  */
-export const T_STRIKE = 0.72;
+export const T_STRIKE = 0.45;
 export const T_CONTACT = T_STRIKE + 0.167;
-export const T_CLEAR = T_CONTACT + 0.95;
-export const T_ASSEMBLE = T_CONTACT + 1.4;
+/*
+ * These used to sit far enough apart that the break ran out of energy
+ * between them: the scatter decayed almost to a standstill, the nine picked
+ * themselves up and made for the edge, and then the six accelerated harder
+ * than the break itself to reach their slots. Two re-accelerations after a
+ * lull is what reads as the animation pausing and starting again. They now
+ * overlap, so one continuous decay carries the whole shot.
+ */
+export const T_CLEAR = T_CONTACT + 0.2;
+export const T_ASSEMBLE = T_CONTACT + 0.5;
 export const T_COPY = T_CONTACT + 0.2;
 
 /** Where the cue ball waits, just in front of the rack, close to the lens. */
@@ -175,15 +216,18 @@ export function rack(stacked: boolean): Ball[] {
 
   for (let i = 0; i < 15; i++) {
     const nameIdx = NAME_SLOTS.indexOf(i);
+    // racked, the six wear their numbers like any other set
     const spec =
       nameIdx >= 0
-        ? { color: NAME[nameIdx].color, striped: false, face: NAME[nameIdx].ch }
+        ? { color: NAME[nameIdx].color, striped: false, face: String(nameIdx + 1) }
         : i === EIGHT_SLOT
           ? REST[1]
           : fill[fillIdx++];
 
     balls.push({
       id: `b${i}`,
+      clearDelay: (i % 5) * 0.05,
+      clearDir: 0,
       x: pos[i].x,
       z: pos[i].z,
       vx: 0,
@@ -193,6 +237,7 @@ export function rack(stacked: boolean): Ball[] {
       cue: false,
       letter: nameIdx >= 0 ? NAME[nameIdx].ch : undefined,
       face: spec.face,
+      letterFace: nameIdx >= 0 ? NAME[nameIdx].ch : undefined,
       m: tumbled(i),
       tx: nameIdx >= 0 ? slots[nameIdx].x : 0,
       tz: nameIdx >= 0 ? slots[nameIdx].z : 0,
@@ -204,6 +249,8 @@ export function rack(stacked: boolean): Ball[] {
 
   balls.push({
     id: "cue",
+    clearDelay: 0.3,
+    clearDir: 0,
     x: CUE_START.x,
     z: CUE_START.z,
     vx: 0,
@@ -262,6 +309,7 @@ export function targets(stacked: boolean): { x: number; z: number }[] {
 /** Drop straight to the end state — the reduced-motion frame. */
 export function settle(balls: Ball[]): void {
   for (const b of balls) {
+    if (b.letterFace) b.face = b.letterFace;
     if (!b.letter) {
       b.gone = true;
       continue;
@@ -391,32 +439,39 @@ function substep(balls: Ball[], dt: number, t: number): boolean {
   for (const b of balls) {
     if (b.gone) continue;
 
+    if (b.letterFace && t >= T_CONTACT) b.face = b.letterFace;
+
     if (b.letter && assembling) {
       // critically damped: it arrives, and it doesn't wobble when it does
-      const k = Math.min(1, (t - T_ASSEMBLE) / 0.45);
-      const pull = 24 + 32 * k;
+      /*
+       * Force is stiffness times distance, so the stiffness has to start low
+       * and finish high: gentle while the balls are still far out, or they
+       * surge; firm once they are close, or the last half a ball's width
+       * takes seconds to close and the sequence overruns its own timeout.
+       */
+      const k = Math.min(1, (t - T_ASSEMBLE) / 0.85);
+      const pull = 8 + 36 * k;
       b.vx += (b.tx - b.x) * pull * dt;
       b.vz += (b.tz - b.z) * pull * dt;
-      const damp = Math.pow(0.9 - 0.13 * k, dt * 60);
+      const damp = Math.pow(0.88 - 0.14 * k, dt * 60);
       b.vx *= damp;
       b.vz *= damp;
-    } else if (!b.letter && t >= T_CLEAR) {
-      // the nine and the cue keep rolling until they're out of the shot,
-      // the way a break actually scatters them past the edges of frame
-      const lean = Math.min(1, (t - T_CLEAR) * 2.2);
-      const speed = Math.max(Math.hypot(b.vx, b.vz), 150);
-      const away = b.x >= 0 ? 1 : -1;
-      const ux = b.vx || away;
-      const uz = b.vz;
-      const us = Math.hypot(ux, uz) || 1;
-      // steer toward the nearest side of frame, drifting forward past the lens
-      const gx = away * 0.93;
-      const gz = -0.37;
-      const nx = ux / us + (gx - ux / us) * lean;
-      const nz = uz / us + (gz - uz / us) * lean;
-      const ns = Math.hypot(nx, nz) || 1;
-      b.vx = (nx / ns) * speed;
-      b.vz = (nz / ns) * speed;
+    } else if (!b.letter && t >= T_CLEAR + b.clearDelay) {
+      /*
+       * The nine and the cue drift out of the shot. This is a steady push
+       * toward the nearest edge, eased in — not a floor under their speed.
+       * A floor is a step: every ball that had slowed below it got snapped
+       * back up to pace on a single tick, which is the lurch that read as
+       * the animation stopping and starting again.
+       */
+      const lean = Math.min(1, (t - T_CLEAR - b.clearDelay) * 2.5);
+      const ease = lean * lean * (3 - 2 * lean);
+      // commit to a side once, or a ball sitting near the centre line will
+      // dither as its x creeps across zero and never get anywhere
+      if (!b.clearDir) b.clearDir = b.x >= 0 ? 1 : -1;
+      const push = 95 * ease;
+      b.vx += b.clearDir * 0.86 * push * dt;
+      b.vz += -0.5 * push * dt;
     }
 
     // cloth: a rolling ball sheds speed at a near-constant rate. The six on
@@ -490,7 +545,9 @@ export function done(balls: Ball[]): boolean {
   for (const b of balls) {
     if (!b.letter) {
       if (!b.gone) return false;
-    } else if (Math.abs(b.tx - b.x) + Math.abs(b.tz - b.z) > 0.5 || turned(b.m) > 0.02) {
+      // a third of a millimetre on a real ball: past this the spring is
+      // still converging but nothing on screen is moving any more
+    } else if (Math.abs(b.tx - b.x) + Math.abs(b.tz - b.z) > 0.8 || turned(b.m) > 0.05) {
       return false;
     }
   }
