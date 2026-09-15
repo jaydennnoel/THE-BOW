@@ -14,17 +14,21 @@ import {
 } from "@/lib/table";
 import type { Ball } from "@/lib/table";
 import {
+  buildFrame,
   depthFor,
   drawBall,
   drawImpact,
   drawRoom,
   drawShadow,
-  inDepthOrder,
   dropRoomCache,
+  facesUsed,
+  inDepthOrder,
   makeCam,
   project,
 } from "@/lib/render";
 import type { Cam } from "@/lib/render";
+import { createRenderer } from "@/lib/gl";
+import type { Renderer } from "@/lib/gl";
 import { dropGlyphCache, dropShadeCache, dropSprites, setClothColour } from "@/lib/ball";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { Eyebrow } from "./ui/Eyebrow";
@@ -53,6 +57,10 @@ const TIMEOUT = T_ASSEMBLE + 2.8;
  */
 export function Hero() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const glCanvasRef = useRef<HTMLCanvasElement>(null);
+  const glRef = useRef<Renderer | null>(null);
+  const glReady = useRef(false);
+  const dprRef = useRef(1);
   const copyRef = useRef<HTMLDivElement>(null);
 
   const balls = useRef<Ball[]>([]);
@@ -64,6 +72,11 @@ export function Hero() {
   const running = useRef(true);
   const size = useRef({ w: 0, h: 0 });
   const pointer = useRef({ x: 0, z: 0, on: false });
+
+  /** Rolling frame cost, used to thin the motion blur on slow machines. */
+  const cost = useRef(16);
+  /** Set once if this machine clearly has no hardware acceleration. */
+  const eased = useRef(false);
 
   const [struck, setStruck] = useState(false);
   const [copyIn, setCopyIn] = useState(false);
@@ -84,13 +97,22 @@ export function Hero() {
     const box = canvas.getBoundingClientRect();
     if (!ctx || !box.width) return;
 
+    // the display's real resolution, which is what the balls are rasterised
+    // at — capping this is what made them look pixelated
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    dprRef.current = dpr;
     const w = box.width;
     const h = box.height;
     size.current = { w, h };
     canvas.width = Math.round(w * dpr);
     canvas.height = Math.round(h * dpr);
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+    if (!glRef.current && glCanvasRef.current) {
+      glRef.current = createRenderer(glCanvasRef.current);
+      glReady.current = false;
+    }
+    glRef.current?.resize(w, h, dpr);
 
     const c = makeCam(w, h);
     if (!cam.current || Math.abs(c.sin - cam.current.sin) > 1e-6) {
@@ -144,6 +166,13 @@ export function Hero() {
     focus.current = z;
 
     if (rebuild) balls.current = rack(stacked);
+
+    const gl = glRef.current;
+    if (gl && !glReady.current) {
+      gl.setGlyphs(facesUsed(balls.current));
+      gl.setCloth([0.12, 0.54, 0.27]);
+      glReady.current = true;
+    }
     for (const b of balls.current) {
       const i = b.letter ? "THEBOW".indexOf(b.letter) : -1;
       if (i < 0) continue;
@@ -162,10 +191,38 @@ export function Hero() {
 
     drawRoom(ctx, c, w, h);
 
+    const gl = glRef.current;
+    if (gl && !gl.lost()) {
+      // below about 24ms a frame there is headroom for the full smear; past
+      // that, thin it rather than drop frames
+      const quality = Math.max(0.2, Math.min(1, 24 / Math.max(cost.current, 1)));
 
-    const order = inDepthOrder(balls.current);
-    for (const b of order) drawShadow(ctx, c, b);
-    for (const b of order) drawBall(ctx, c, b, focus.current, running.current);
+      /*
+       * A machine with no GPU acceleration rasterises this shader on the
+       * CPU, and no amount of thinning the smear will save it. Once it is
+       * unmistakable, halve the resolution the balls are drawn at and let
+       * the browser scale them up — softer, but it keeps moving. Done once,
+       * so it can't oscillate.
+       */
+      if (!eased.current && clock.current > 2 && cost.current > 40) {
+        eased.current = true;
+        dprRef.current = Math.max(1, dprRef.current / 2);
+        gl.resize(size.current.w, size.current.h, dprRef.current);
+      }
+      const { shadows, balls: draws } = buildFrame(
+        c,
+        balls.current,
+        dprRef.current,
+        gl.glyphIndex,
+        quality,
+      );
+      gl.frame(shadows, draws, Math.asin(c.sin));
+    } else {
+      // no GPU: the same scene, shaded on the CPU
+      const order = inDepthOrder(balls.current);
+      for (const b of order) drawShadow(ctx, c, b);
+      for (const b of order) drawBall(ctx, c, b, focus.current, running.current);
+    }
 
     const cue = balls.current[balls.current.length - 1];
     if (running.current && cue && !cue.gone) {
@@ -192,6 +249,7 @@ export function Hero() {
     (now: number) => {
       if (!last.current) last.current = now;
       const dt = Math.min((now - last.current) / 1000, 0.034);
+      cost.current += ((now - last.current) - cost.current) * 0.1;
       last.current = now;
 
       if (running.current) {
@@ -335,8 +393,10 @@ export function Hero() {
       data-struck={struck}
       className="relative flex min-h-[100svh] flex-col justify-end overflow-hidden bg-ink pb-[clamp(1.75rem,5vh,4rem)] pt-header"
     >
+      <canvas ref={canvasRef} aria-hidden="true" className="absolute inset-0 z-0 block h-full w-full" />
+
       <canvas
-        ref={canvasRef}
+        ref={glCanvasRef}
         aria-hidden="true"
         className="absolute inset-0 z-0 block h-full w-full touch-pan-y"
         onPointerMove={(e) => {

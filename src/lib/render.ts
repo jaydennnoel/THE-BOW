@@ -15,6 +15,7 @@
  */
 
 import { rgb, setClothColour, sprite } from "./ball";
+import type { BallDraw, ShadowDraw } from "./gl";
 import type { Skin } from "./ball";
 import { BED, R } from "./table";
 import type { Ball } from "./table";
@@ -379,3 +380,107 @@ export function drawImpact(ctx: CanvasRenderingContext2D, cam: Cam, ball: { x: n
 }
 
 export { BED };
+
+
+/* ── handing the frame to the GPU ──────────────────────────────────────── */
+
+const colours = new Map<string, [number, number, number]>();
+function unit(hex: string): [number, number, number] {
+  let c = colours.get(hex);
+  if (!c) {
+    const [r, g, b] = rgb(hex);
+    c = [r / 255, g / 255, b / 255];
+    colours.set(hex, c);
+  }
+  return c;
+}
+
+/** Every character printed on the table, for the glyph atlas. */
+export function facesUsed(list: Ball[]): string[] {
+  const seen: string[] = [];
+  for (const b of list) if (b.face && !seen.includes(b.face)) seen.push(b.face);
+  return seen;
+}
+
+const mat = new Map<string, Float32Array>();
+
+/**
+ * Projects the table into draw lists for the GPU.
+ *
+ * Positions come back in device pixels, because that is the resolution the
+ * shader will actually rasterise at — passing CSS pixels is what left the
+ * balls rendering at half the display's resolution before.
+ */
+export function buildFrame(
+  cam: Cam,
+  list: Ball[],
+  dpr: number,
+  glyphIndex: (ch: string) => number,
+  /** 0-1. Thins the motion blur when the machine can't keep up. */
+  quality = 1,
+): { shadows: ShadowDraw[]; balls: BallDraw[] } {
+  const shadows: ShadowDraw[] = [];
+  const balls: BallDraw[] = [];
+
+  for (const b of inDepthOrder(list)) {
+    const p = project(cam, b.x, b.z, R);
+    const r = p.k * R * dpr;
+    if (r < 0.6) continue;
+
+    const foot = project(cam, b.x, b.z, 0);
+    shadows.push({ x: foot.sx * dpr, y: foot.sy * dpr, r: foot.k * R * dpr, alpha: 1 });
+
+    // row-major object->room becomes column-major for the uniform
+    let m = mat.get(b.id);
+    if (!m) {
+      m = new Float32Array(9);
+      mat.set(b.id, m);
+    }
+    m[0] = b.m[0];
+    m[1] = b.m[3];
+    m[2] = b.m[6];
+    m[3] = b.m[1];
+    m[4] = b.m[4];
+    m[5] = b.m[7];
+    m[6] = b.m[2];
+    m[7] = b.m[5];
+    m[8] = b.m[8];
+
+    const common = {
+      r,
+      m,
+      colour: unit(b.color),
+      striped: b.striped,
+      cue: b.cue,
+      glyph: b.cue || !b.face ? -1 : glyphIndex(b.face),
+    };
+
+    // The smear runs along the path the ball actually covered this frame,
+    // not along its velocity vector — the two diverge the moment a ball is
+    // deflected mid-frame, and the smear peels off the ball.
+    const prev = project(cam, b.px, b.pz, R);
+    const dx = (p.sx - prev.sx) * dpr;
+    const dy = (p.sy - prev.sy) * dpr;
+    const travel = Math.hypot(dx, dy);
+    if (travel > r * 0.16) {
+      // every stamp is a full sphere evaluation, so this is the first thing
+      // to give up on a machine that is struggling
+      const ceiling = Math.max(2, Math.round(6 * quality));
+      const steps = Math.max(2, Math.min(ceiling, Math.round(travel / (r * 0.42))));
+      const weight = Math.min(1, travel / (r * 1.5)) * 0.5;
+      for (let i = steps; i >= 1; i--) {
+        const k = i / (steps + 1);
+        balls.push({
+          ...common,
+          x: p.sx * dpr - dx * k,
+          y: p.sy * dpr - dy * k,
+          alpha: (weight / steps) * (1.9 - k),
+        });
+      }
+    }
+
+    balls.push({ ...common, x: p.sx * dpr, y: p.sy * dpr, alpha: 1 });
+  }
+
+  return { shadows, balls };
+}
